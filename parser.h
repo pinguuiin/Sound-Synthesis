@@ -47,6 +47,7 @@ typedef struct s_track
 // Information provided by the music sheet
 typedef struct s_info
 {
+	FILE		*fd;
 	char		*name;
 	int			tempo;
 	int			num_tracks;
