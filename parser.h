@@ -16,7 +16,7 @@ typedef enum e_track_type
 	SQUARE
 }	t_track_type;
 
-// File reading position indicator
+// File reading position indicator - for parsing use
 typedef enum e_file_pos
 {
 	NAME,
