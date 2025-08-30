@@ -1,6 +1,6 @@
 #include "parser.h"
 
-void	handle_name(t_info *info, char *line)
+static void	handle_name(t_info *info, char *line)
 {
 	int		len;
 	char	*s;
@@ -23,7 +23,7 @@ void	handle_name(t_info *info, char *line)
 	}
 }
 
-void	handle_tempo(t_info *info, char *line)
+static void	handle_tempo(t_info *info, char *line)
 {
 	info->tempo = 0;
 	if (strncmp(line, "tempo ", 6) == 0){
@@ -36,7 +36,7 @@ void	handle_tempo(t_info *info, char *line)
 	info->file_pos =TRACKS;
 }
 
-void	handle_tracks(t_info *info, char *line)
+static void	handle_tracks(t_info *info, char *line)
 {
 	int	i;
 
@@ -80,7 +80,7 @@ void	handle_tracks(t_info *info, char *line)
 	info->file_pos = NOTES;
 }
 
-void	handle_sidenote(t_info *info, char *line)
+static void	handle_sidenote(t_info *info, char *line)
 {
 	int		i;
 	int		len;
@@ -105,7 +105,7 @@ void	handle_sidenote(t_info *info, char *line)
 	}
 }
 
-void	handle_one_note(t_info *info, char *line)
+static void	handle_one_note(t_info *info, char *line)
 {
 	int		i;
 	t_note	*last;
@@ -114,7 +114,7 @@ void	handle_one_note(t_info *info, char *line)
 	i = info->now_track;
 	new_note = malloc(sizeof(t_note));
 	if (!new_note)
-		free_info(info);
+		exit(free_info(info));
 	new_note->next = NULL;
 	new_note->pitch = *line;
 	line++;
@@ -145,12 +145,15 @@ void	handle_one_note(t_info *info, char *line)
 		else
 			new_note->duration = last->duration;
 	}
-	while (last->next)
+	while (last && last->next)
 		last = last->next;
-	last->next = new_note;
+	if (last)
+		last->next = new_note;
+	else
+		info->tracks[i].note = new_note;
 }
 
-void	handle_notes(t_info *info, char *line)
+static void	handle_notes(t_info *info, char *line)
 {
 	int	real_track;
 
@@ -177,7 +180,7 @@ void	handle_notes(t_info *info, char *line)
 		info->now_track++;
 }
 
-void	handle_notes_info(t_info *info, char *line)
+static void	handle_notes_info(t_info *info, char *line)
 {
 	if (line[0] == '#')
 		handle_sidenote(info, line);
@@ -186,12 +189,12 @@ void	handle_notes_info(t_info *info, char *line)
 	return ;
 }
 
-void	parse_line(t_info  *info, char *line)
+static void	parse_line(t_info  *info, char *line)
 {
 	int	i;
 
 	i = 0;
-	if (!line || line[0] == '\0' || line[0] == ' ')
+	if (!line || line[0] == '\0' || line[0] == ' ' || line[0] == '\n')
 		return ;
 	while (line[i]){
 		if (line[i] == '\n')
@@ -238,5 +241,5 @@ void	parser(t_info *info)
 	free(info->line);
 	info->line = NULL;
 	fclose(info->fd);
-	info->fd = -1;
+	info->fd = NULL;
 }

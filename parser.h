@@ -23,7 +23,6 @@ typedef enum e_file_pos
 	NAME,
 	TEMPO,
 	TRACKS,
-	SIDENOTE,
 	NOTES
 }	t_file_pos;
 
@@ -44,7 +43,7 @@ typedef struct s_track
 	t_track_type	type;
 	char			*sidenote;
 	t_note			*note;
-	int				begin;  //beginning of line, for octave and duration reset
+	int				begin;  //beginning of line, for octave and duration reset in parsing
 }	t_track;
 
 // Information provided by the music sheet
@@ -60,6 +59,7 @@ typedef struct s_info
 	t_file_pos	file_pos;
 }	t_info;
 
+int		free_info(t_info *info);
 void	parser(t_info *info);
 char	*ft_strjoin(char const *s1, char const *s2);
 
