@@ -6,6 +6,7 @@
 #include <string.h>
 #include <fcntl.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 // Type of supported wave forms
 typedef enum e_track_type
@@ -30,11 +31,10 @@ typedef enum e_file_pos
 typedef struct s_note
 {
 	char			pitch; // from 'a' to 'g', or 'r' representing a rest
-	char			alteration; // '#' or 'b'
+	char			alteration; // '#' or 'b', '-' if no alteration
 	int				octave; // 0 to 9
 	float			duration; // duration in beats
 	struct s_note	*next;
-	struct s_note	*before;
 }	t_note;
 
 // Description and notes contained in each track
@@ -43,7 +43,8 @@ typedef struct s_track
 	int				id;
 	t_track_type	type;
 	char			*sidenote;
-	t_note			*notes;
+	t_note			*note;
+	int				begin;  //beginning of line, for octave and duration reset
 }	t_track;
 
 // Information provided by the music sheet
