@@ -5,15 +5,17 @@ void	handle_name(t_info *info, char *line)
 	int		len;
 	char	*s;
 
-	len = strlen(line) - 1;
+	while (*line == '#' || *line == ' ')
+		line++;
+	len = strlen(line) + 1;
 	if (!info->name){
 		info->name = malloc(len * sizeof(char));
 		if (!info->name)
 			exit(free_info(info));
-		memmove(info->name, line + 2, len);
+		memmove(info->name, line, len);
 	}
 	else {
-		s = ft_strjoin(info->name, line + 2);
+		s = ft_strjoin(info->name, line);
 		if (!s)
 			exit(free_info(info));
 		free(info->name);
@@ -50,7 +52,10 @@ void	handle_tracks(t_info *info, char *line)
 		if (!info->tracks)
 			exit(free_info(info));
 		i = 0;
-		for (i = 0; i < info->num_tracks && *line;){
+		for (i = 0; i < info->num_tracks && *line;)
+		{
+			info->tracks[i].sidenote = NULL;
+			info->tracks[i].notes = NULL;
 			if (strncmp(line, "sin", 3) == 0){
 				info->tracks[i].id = i + 1;
 				info->tracks[i++].type = SINE;
@@ -75,29 +80,41 @@ void	handle_tracks(t_info *info, char *line)
 				line++;
 		}
 	}
-	info->file_pos = SIDENOTE;
+	info->file_pos = NOTES;
 }
 
-// void	handle_sidenote(t_info *info, char *line)
-// {
-// 	int		len;
-// 	char	*s;
+void	handle_sidenote(t_info *info, char *line)
+{
+	int		i;
+	int		len;
+	char	*s;
 
-// 	len = strlen(line) - 1;
-// 	if (!info->sidenote){
-// 		info->sidenote = malloc(len * sizeof(char));
-// 		if (!info->sidenote)
-// 			exit(free_info(info));
-// 		memmove(info->sidenote, line + 2, len);
-// 	}
-// 	else {
-// 		s = ft_strjoin(info->sidenote, line + 2);
-// 		if (!s)
-// 			exit(free_info(info));
-// 		free(info->sidenote);
-// 		info->sidenote = s;
-// 	}
-// }
+	i = info->now_track;
+	while (*line == '#' || *line == ' ')
+		line++;
+	len = strlen(line) + 1;
+	if (!info->tracks[i].sidenote){
+		info->tracks[i].sidenote = malloc(len * sizeof(char));
+		if (!info->tracks[i].sidenote)
+			exit(free_info(info));
+		memmove(info->tracks[i].sidenote, line, len);
+	}
+	else {
+		s = ft_strjoin(info->tracks[i].sidenote, line);
+		if (!s)
+			exit(free_info(info));
+		free(info->tracks[i].sidenote);
+		info->tracks[i].sidenote = s;
+	}
+}
+
+void	handle_notes_info(t_info *info, char *line)
+{
+	if (line[0] == '#')
+		handle_sidenote(info, line);
+	else
+		handle_notes(info, line);
+}
 
 void	parse_line(t_info  *info, char *line)
 {
@@ -105,8 +122,8 @@ void	parse_line(t_info  *info, char *line)
 		return ;
 	if (info->file_pos == NAME)
 		info->file_pos = (line[0] == '#') ? NAME : TEMPO;
-	else if (info->file_pos == SIDENOTE)
-		info->file_pos = (line[0] == '#') ? SIDENOTE : NOTES;
+	// else if (info->file_pos == NOTES)
+	// 	info->file_pos = (line[0] == '#') ? SIDENOTE : NOTES;
 	switch (info->file_pos) {
 		case NAME:
 			handle_name(info, line);
@@ -117,11 +134,8 @@ void	parse_line(t_info  *info, char *line)
 		case TRACKS:
 			handle_tracks(info, line);
 			break ;
-		case SIDENOTE:
-			handle_sidenotes(info, line);
-			break ;
 		case NOTES:
-			handle_notes(info, line);
+			handle_notes_info(info, line);
 			break ;
 	}
 }
@@ -134,6 +148,7 @@ void	parser(t_info *info)
 	info->line = NULL;
 	info->name = NULL;
 	info->tracks = NULL;
+	info->now_track = 0;
 	info->file_pos = NAME;
 	while (getline(&info->line, &len, info->fd) != -1){
 		parse_line(info, info->line);

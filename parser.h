@@ -50,10 +50,11 @@ typedef struct s_track
 typedef struct s_info
 {
 	FILE		*fd;
-	char		*line;
+	char		*line;  //current line been read
 	char		*name;
 	int			tempo;
 	int			num_tracks;
+	int			now_track;  // current track the reading position at
 	t_track		*tracks;
 	t_file_pos	file_pos;
 }	t_info;
