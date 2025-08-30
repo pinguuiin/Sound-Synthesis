@@ -3,6 +3,7 @@
 
 #include <unistd.h>
 #include <stdio.h>
+#include <string.h>
 #include <fcntl.h>
 #include <stdlib.h>
 
@@ -15,10 +16,11 @@ typedef enum e_track_type
 	SQUARE
 }	t_track_type;
 
-// File reading position indicator
+// File reading position indicator - for parsing use
 typedef enum e_file_pos
 {
 	NAME,
+	TEMPO,
 	TRACKS,
 	SIDENOTE,
 	NOTES
@@ -47,11 +49,16 @@ typedef struct s_track
 // Information provided by the music sheet
 typedef struct s_info
 {
+	FILE		*fd;
+	char		*line;
 	char		*name;
 	int			tempo;
 	int			num_tracks;
 	t_track		*tracks;
 	t_file_pos	file_pos;
 }	t_info;
+
+void	parser(t_info *info);
+char	*ft_strjoin(char const *s1, char const *s2);
 
 #endif
