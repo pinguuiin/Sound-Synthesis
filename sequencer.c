@@ -1,7 +1,7 @@
 #include <sequencer.h>
 
 static int64_t	get_current_time(void);
-static void	play_music(t_info *info, int64_t starting_time);
+static void		play_music(t_info *info, int64_t starting_time);
 
 // WARN: For each and every note:
 // 		Determine the "attack" moment and the "release / cut" moment.
