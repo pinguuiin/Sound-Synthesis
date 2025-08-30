@@ -1,9 +1,32 @@
 #include "parser.h"
 
+int	free_info(t_info *info)
+{
+	t_note	*temp;
+
+	if (info->fd)
+		fclose(info->fd);
+	free(info->line);
+	if (info->name)
+		free(info->name);
+	if (info->tracks){
+		for (int i = 0; i < info->num_tracks; i++){
+			if (info->tracks[i].sidenote)
+				free(info->tracks[i].sidenote);
+			while (info->tracks[i].note){
+				temp = info->tracks[i].note->next;
+				free(info->tracks[i].note);
+				info->tracks[i].note = temp;
+			}
+		}
+		free(info->tracks);
+	}
+	return (1);
+}
+
 int	main(int argc, char **argv)
 {
 	t_info	info;
-	size_t	len;
 
 	if (argc != 2){
 		write(2, "Invalid input\n", 14);
@@ -15,6 +38,7 @@ int	main(int argc, char **argv)
 		return (1);
 	}
 	parser(&info);
-	sound_generator(info);
+	// sound_generator(info);
+	free_info(&info);
 	return (0);
 }
