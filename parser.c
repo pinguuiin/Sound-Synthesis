@@ -34,6 +34,71 @@ void	handle_tempo(t_info *info, char *line)
 	info->file_pos =TRACKS;
 }
 
+void	handle_tracks(t_info *info, char *line)
+{
+	int	i;
+
+	i = 0;
+	if (strncmp(line, "tracks ", 7) == 0){
+		line += 7;
+		info->num_tracks = 1;
+		while (line[i]){
+			if (line[i++] == ',')
+				info->num_tracks++;
+		}
+		info->tracks = malloc(info->num_tracks * sizeof(t_track));
+		if (!info->tracks)
+			exit(free_info(info));
+		i = 0;
+		for (i = 0; i < info->num_tracks && *line;){
+			if (strncmp(line, "sin", 3) == 0){
+				info->tracks[i].id = i + 1;
+				info->tracks[i++].type = SINE;
+				line += 4;
+			}
+			else if (strncmp(line, "saw", 3) == 0){
+				info->tracks[i].id = i + 1;
+				info->tracks[i++].type = SAW;
+				line += 3;
+			}
+			else if (strncmp(line, "tri", 3) == 0){
+				info->tracks[i].id = i + 1;
+				info->tracks[i++].type = TRIANGLE;
+				line += 8;
+			}
+			else if (strncmp(line, "squ", 3) == 0){
+				info->tracks[i].id = i + 1;
+				info->tracks[i++].type = SQUARE;
+				line += 6;
+			}
+			if (*line == ',' || *line == ' ')
+				line++;
+		}
+	}
+	info->file_pos = SIDENOTE;
+}
+
+// void	handle_sidenote(t_info *info, char *line)
+// {
+// 	int		len;
+// 	char	*s;
+
+// 	len = strlen(line) - 1;
+// 	if (!info->sidenote){
+// 		info->sidenote = malloc(len * sizeof(char));
+// 		if (!info->sidenote)
+// 			exit(free_info(info));
+// 		memmove(info->sidenote, line + 2, len);
+// 	}
+// 	else {
+// 		s = ft_strjoin(info->sidenote, line + 2);
+// 		if (!s)
+// 			exit(free_info(info));
+// 		free(info->sidenote);
+// 		info->sidenote = s;
+// 	}
+// }
+
 void	parse_line(t_info  *info, char *line)
 {
 	if (!line || line[0] == '\0' || line[0] == ' ')
