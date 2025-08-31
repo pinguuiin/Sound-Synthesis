@@ -11,7 +11,6 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror -g -O0
 LDFLAGS = libportaudio.a -lrt -lm -lasound -ljack -pthread
 HEADER = -I.
-LDFLAGS = -lrt -lm -lasound -ljack -pthread
 
 SRCS = main.c \
 		parser.c \
@@ -32,7 +31,7 @@ all: $(NAME)
 	$(CC) $(CFLAGS) $(HEADER) -c $< -o $@
 
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $(NAME) $(LDFLAGS)
+	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) -o $(NAME)
 	@echo "$(BBLUE)Compiled and linked.$(RESET_COLOR)"
 
 clean:
