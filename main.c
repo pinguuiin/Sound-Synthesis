@@ -38,6 +38,7 @@ int	main(int argc, char **argv)
 		return (1);
 	}
 	parser(&info);
+	processor(&info);
 	// sound_generator(info);
 	free_info(&info);
 	return (0);
