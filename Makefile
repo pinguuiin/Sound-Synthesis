@@ -9,9 +9,11 @@ RESET_COLOR=\033[0m
 NAME = midione
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -g -O0
-LDFLAGS = libportaudio.a -lrt -lm -lasound -ljack -pthread
-HEADER = -I.
+LDFLAGS = -L$(HOME)/.local/lib
+LDLIBS = libportaudio.a -lrt -lm -lasound -ljack -pthread
+HEADER = -I./include
 
+SRC_DIR = src
 SRCS = main.c \
 		parser.c \
 		processor.c \
@@ -21,21 +23,23 @@ SRCS = main.c \
 		mixer.c \
 		utils.c
 
-OBJS = $(SRCS:.c=.o)
+OBJ_DIR = obj
+OBJS = $(addprefix $(OBJ_DIR)/, $(SRCS:.c=.o))
 
 .SECONDARY: $(OBJS)
 
 all: $(NAME)
 
-%.o: %.c
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(HEADER) -c $< -o $@
 
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) -o $(NAME)
+	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) -o $(NAME) $(LDLIBS)
 	@echo "$(BBLUE)Compiled and linked.$(RESET_COLOR)"
 
 clean:
-	rm -f $(OBJS)
+	rm -rf $(OBJ_DIR)
 	@echo "$(BYELLOW)All object files cleaned.$(RESET_COLOR)"
 
 fclean: clean
