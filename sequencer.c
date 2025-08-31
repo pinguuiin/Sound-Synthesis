@@ -1,7 +1,7 @@
 #include <sequencer.h>
 
-static int64_t	get_current_time(void);
-static int		play_music(t_info *info, int64_t start_time);
+static int64_t	get_current_time(int64_t start_time);
+static int		play_music(t_info *info, int64_t start_time, float beat_to_usec);
 
 // WARN: For each and every note:
 // 		Determine the "attack" moment and the "release / cut" moment.
@@ -13,7 +13,7 @@ static int		play_music(t_info *info, int64_t start_time);
 // 		in any case is not that bad.
 void	sound_generator(t_info *info)
 {
-	int64_t	beat_to_usec;
+	float	beat_to_usec;
 	int64_t	start_time;
 
 	// initialize variables to zero.
@@ -43,7 +43,7 @@ void	sound_generator(t_info *info)
 }
 
 // returns 0 upon success, and -1 upon gettimeofday() failure
-static int	play_music(t_info *info, int64_t start_time, int64_t beat_to_usec)
+static int	play_music(t_info *info, int64_t start_time, float beat_to_usec)
 {
 	size_t	n_done_playing;
 	int64_t	current_time;
