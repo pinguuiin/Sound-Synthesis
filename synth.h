@@ -11,8 +11,10 @@
 #define SAMPLE_RATE			48000
 #define FRAMES_PER_BUFFER	256
 #define TABLE_SIZE			2048
+// DELETE?
 #define NUM_VOICES			4
 
+// DELETE?
 typedef enum e_track_type
 {
 	SINE,
@@ -37,6 +39,7 @@ typedef struct s_mixer
 	t_synth	**synths;
 }	t_mixer;
 
+// DELETE?
 typedef struct s_ntof
 {
 	char	*note;
