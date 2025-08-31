@@ -48,6 +48,7 @@ static int	play_music(t_info *info, int64_t start_time, int64_t beat_to_usec)
 	size_t	n_done_playing;
 	int64_t	current_time;
 	size_t	i;
+	t_note	*temp;
 
 	n_done_playing = 0;
 	i = 0;
@@ -69,14 +70,19 @@ static int	play_music(t_info *info, int64_t start_time, int64_t beat_to_usec)
 
 		while (i < info->num_tracks)
 		{
+			if (info->tracks[i]->note)
+			{
+				// TODO: how do I keep track of the notes, without moving the
+				// initial note pointer which we need in order to free the
+				// memory properly?
 
-
+			}
 
 
 
 			// increment n_done_playing once a track's notes linked list is pointing to NULL.
 			// remember that some tracks are shorter than others! That's why this is crucial.
-			if (!info->tracks[i].notes)
+			if (!info->tracks[i].note)
 				n_done_playing++;
 			i++;
 		}
@@ -97,6 +103,3 @@ static int64_t	get_current_time(int64_t start_time)
 		return (-1);
 	return (time.tv_sec * 1000000 + time.tv_usec - start_time);
 }
-
-
-
