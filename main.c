@@ -40,7 +40,7 @@ int	main(int argc, char **argv)
 	parser(&info);
 	processor(&info);
 	sequencer(&info);
-	synth(); // WARN: check!
+	synth(&info); // WARN: check!
 	free_info(&info);
 	return (0);
 }
