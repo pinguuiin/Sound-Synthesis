@@ -44,10 +44,9 @@ static double	get_current_time(double start_time)
 // returns 0 upon success, and -1 upon gettimeofday() failure
 static int	play_music(t_info *info, double start_time, t_track *tracks)
 {
-	size_t	n_done_playing;
+	int		n_done_playing;
 	double	current_time;
-	size_t	i;
-	t_note	*temp;
+	int		i;
 
 	n_done_playing = 0;
 	i = 0;
@@ -94,14 +93,19 @@ static int	play_music(t_info *info, double start_time, t_track *tracks)
 
 static void	play_first_note(int num_tracks, t_track *tracks)
 {
-	size_t	i;
+	int	i;
 
 	i = 0;
 	while (i < num_tracks)
 	{
-		// if (tracks[i].note->pitch != 'r')
+		if (tracks[i].note->pitch != 'r')
+		{
+			usleep(100); // WARN: this is just a placeholder to let the program
+									// compile since set_note() is missing!
+			
 			// set_note(mixer->synths[i], frequency???, 1.0f);
-		// else
+		}
+		else
 			// set_note(mixer->synths[i], frequency???, 0.0f);
 		i++;
 	}
