@@ -57,6 +57,7 @@ static void	handle_tracks(t_info *info, char *line)
 		{
 			info->tracks[i].sidenote = NULL;
 			info->tracks[i].note = NULL;
+			info->tracks[i].time_of_last_note = 0;
 			info->tracks[i].id = i + 1;
 			info->tracks[i].num_notes = 0;
 			if (strncmp(line, "saw", 3) == 0){
@@ -113,6 +114,7 @@ static void	handle_one_note(t_info *info, char *line)
 	t_note	*last;
 	t_note	*new_note;
 	float	duration_in_beats;
+	double	temp;
 
 	i = info->now_track;
 	new_note = malloc(sizeof(t_note));
@@ -137,7 +139,8 @@ static void	handle_one_note(t_info *info, char *line)
 			duration_in_beats = strtof(line + 1, NULL);
 		else
 			duration_in_beats = 1;
-		new_note->duration = (double)duration_in_beats * info->beat_to_usec;
+		temp = (double)duration_in_beats * info->beat_to_usec;
+		new_note->duration = (int64_t)temp;
 	}
 	else {
 		while (last->next)
@@ -150,7 +153,8 @@ static void	handle_one_note(t_info *info, char *line)
 		if (*line == '/')
 		{
 			duration_in_beats = strtof(line + 1, NULL);
-			new_note->duration = (double)duration_in_beats * info->beat_to_usec;
+			temp = (double)duration_in_beats * info->beat_to_usec;
+			new_note->duration = (int64_t)temp;
 		}
 		else
 			new_note->duration = last->duration;

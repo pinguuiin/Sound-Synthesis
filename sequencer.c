@@ -1,23 +1,16 @@
-#include <sequencer.h>
+#include "sequencer.h"
 
 static int64_t	get_current_time(int64_t start_time);
-static int		play_music(t_info *info, int64_t start_time);
+static int		play_music(t_info *info, int64_t start_time, t_track *tracks);
+static void		play_first_note(int num_tracks, t_track *tracks);
 
-// WARN: For each and every note:
-// 		Determine the "attack" moment and the "release / cut" moment.
-// 		Note that the moment of release should be a little bit BEFORE the
-// 		next note.
-// 		NOTE: some music sheets have repeated notes, non-separated by rests!!
-// 		See for example Nightcall.synth, track number 14!
-// 		This implies we have to cut the note before playing the next one, which
-// 		in any case is not that bad.
 void	sound_generator(t_info *info)
 {
 	int64_t	start_time;
 
-	// initialize variables to zero.
+	// initialize variables to zero:
+	// important since it is passed to get_current_time()
 	start_time = 0;
-
 
 	// set the starting time
 	start_time = get_current_time(start_time);
@@ -28,97 +21,16 @@ void	sound_generator(t_info *info)
 	}
 
 	// main music loop
-	if (play_music(info, start_time, beat_to_usec) == -1)
+	if (play_music(info, start_time) == -1)
 	{
 		write(2, GET_TIME_FAILURE, sizeof(GET_TIME_FAILURE) - 1);
 		exit (free_info(info));
 	}
 }
 
-/*
-* previous version, which calculates the beat_to_usec factor, here:
-void	sound_generator(t_info *info)
-{
-	float	beat_to_usec;
-	int64_t	start_time;
-
-	// initialize variables to zero.
-	start_time = 0;
-
-	// calculate the factor which will allow conversion of note duration into
-	// milliseconds
-	beat_to_usec = ((float)60 / info->tempo) * 1000000;
-
-
-	// set the starting time
-	start_time = get_current_time(start_time);
-	if (start_time == -1)
-	{
-		write(2, GET_TIME_FAILURE, sizeof(GET_TIME_FAILURE) - 1);
-		exit (free_info(info));
-	}
-
-	// main music loop
-	if (play_music(info, start_time, beat_to_usec) == -1)
-	{
-		write(2, GET_TIME_FAILURE, sizeof(GET_TIME_FAILURE) - 1);
-		exit (free_info(info));
-	}
-}
-*/
-
-// returns 0 upon success, and -1 upon gettimeofday() failure
-static int	play_music(t_info *info, int64_t start_time)
-{
-	size_t	n_done_playing;
-	int64_t	current_time;
-	size_t	i;
-	t_note	*temp;
-
-	n_done_playing = 0;
-	i = 0;
-	current_time = start_time;
-
-	// main loop
-	while (n_done_playing < info->num_tracks)
-	{
-		// go thorugh each track, and check if that track should be playing a new note.
-		// If it finished its note, move the t_note linked list pointer into the next pointer.
-		// then check if that pointer is valid;
-		// 		- if it is:	call set_note() to play that note.
-		// 		- else:		increment n_done_playing!
-
-		// NOTE: usage of the sound function:  void	set_note(<instrument>, <volume>);
-		// If volume is 0.5, the instrument will play the note.
-		// If volume is 0, the instrument will stop playing the note.
-
-
-		while (i < info->num_tracks)
-		{
-			if (info->tracks[i]->note)
-			{
-				// TODO: how do I keep track of the notes, without moving the
-				// initial note pointer which we need in order to free the
-				// memory properly?
-
-			}
-
-
-
-			// increment n_done_playing once a track's notes linked list is pointing to NULL.
-			// remember that some tracks are shorter than others! That's why this is crucial.
-			if (!info->tracks[i].note)
-				n_done_playing++;
-			i++;
-		}
-		i = 0;			// reset i to zero, so we can restart the loop (if everybody did not finish playing yet)
-		usleep(1000);	// sleep in order to avoid unnecessary spinning by system resources
-	}
-	return (0);
-}
-
-// used for:	- getting the starting time
-// 				- getting the current time
+// When called for the starting time, returned time will be in microseconds
+// since the Epoch.
+// For all other calls, it will be in microseconds since start_time.
 static int64_t	get_current_time(int64_t start_time)
 {
 	struct timeval	time;
@@ -127,4 +39,70 @@ static int64_t	get_current_time(int64_t start_time)
 	if (gettimeofday(&time, NULL))
 		return (-1);
 	return (time.tv_sec * 1000000 + time.tv_usec - start_time);
+}
+
+// returns 0 upon success, and -1 upon gettimeofday() failure
+static int	play_music(t_info *info, int64_t start_time, t_track *tracks)
+{
+	size_t	n_done_playing;
+	int64_t	current_time;
+	size_t	i;
+	t_note	*temp;
+
+	n_done_playing = 0;
+	i = 0;
+
+	play_first_note(info->num_tracks, tracks);
+	while (n_done_playing < info->num_tracks)
+	{
+		// NOTE: usage of the sound function:
+		// void	set_note(mixer->synths[voice_number], pitch, volume);
+		// If volume is 0.5, the instrument will play the note.
+		// If volume is 0, the instrument will stop playing the note.
+
+		while (i < info->num_tracks)
+		{
+			current_time = get_current_time(start_time);
+			if (current_time == -1)
+				return (-1);
+			if (tracks[i].note->temp)
+			{
+				if ((current_time - tracks[i].time_last_note_began)
+					>= tracks[i].note->duration)
+				{
+					set_note(????, 0.0); // cut the present note, even if it is a rest.  // TODO: get the prototype and complete
+					tracks[i].note->temp = tracks[i].note->next;
+					if (tracks[i].note->temp)
+					{
+						if (tracks[i].note->pitch != "r")
+							set_note(tracks[i].note->temp, 0.5); // TODO: get the prototype and complete
+						else
+							set_note(tracks[i].note->temp, 0.0); // TODO: get the prototype and complete
+						tracks[i].time_last_note_began = current_time;
+					}
+					else
+						n_done_playing++;
+				}
+			}
+			i++;
+		}
+		i = 0;
+		usleep(1000);	// sleep in order to avoid unnecessary spinning by system resources
+	}
+	return (0);
+}
+
+static void	play_first_note(int num_tracks, t_track *tracks)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < num_tracks)
+	{
+		if (tracks[i].note->pitch != "r")
+			set_note(tracks[i].note->temp, 0.5); // TODO: get the prototype and complete
+		else
+			set_note(tracks[i].note->temp, 0.0); // TODO: get the prototype and complete
+		i++;
+	}
 }

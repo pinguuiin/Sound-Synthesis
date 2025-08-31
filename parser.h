@@ -34,9 +34,9 @@ typedef struct s_note
 	char			pitch; // from 'a' to 'g', or 'r' representing a rest
 	char			alteration; // '#' or 'b', '-' if no alteration
 	int				octave; // 0 to 9
-	double			duration; // duration in microseconds
+	int64_t			duration; // duration in microseconds
 	struct s_note	*next;
-	struct s_note	*temp;
+	struct s_note	*temp; // serves the sequencer: it needs to keep track of each voice's current note, without losing the original *note.
 }	t_note;
 
 // Description and notes contained in each track
@@ -48,6 +48,7 @@ typedef struct s_track
 	t_note			*note;
 	int				num_notes;
 	int				begin;  //beginning of line, for octave and duration reset in parsing
+	int64_t			time_last_note_began;
 }	t_track;
 
 // Information provided by the music sheet
