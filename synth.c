@@ -28,6 +28,13 @@ t_synth	*create_synth_from_type(t_track_type type)
 		return create_synth(SINE);
 }
 
+void	set_note(t_synth *synth, float freq, double amplitude)
+{
+	synth->frequency = freq;
+	synth->phaseIncrement = freq / SAMPLE_RATE;
+	synth->amplitude = amplitude;
+}
+
 void	render_synth_to_buffer(t_synth *synth, t_mixer *mixer)
 {
 	int		sample_index;
@@ -74,16 +81,16 @@ static int paCallback(const void *inputBuffer, void *outputBuffer,
 	return (paContinue);
 }
 
-int	main(void)
+void	synth(void)
 {
 	int	num_voices;
 	int	i;
 	t_synth *synth;
-	// from parsing:
+	//PLACEHOLDERS will get these from parsing:
 	num_voices = NUM_VOICES;
-	t_track_type track_types[] = {SINE, SQUARE, TRIANGLE, SAW};
+	t_track_type	track_types[] = {SINE, SQUARE, TRIANGLE, SAW};
 
-	t_mixer *mixer = create_mixer(num_voices);
+	t_mixer	*mixer = create_mixer(num_voices);
 	Pa_Initialize();
 	PaStream	*stream;
 	i = 0;
@@ -95,29 +102,14 @@ int	main(void)
 	}
 	Pa_OpenDefaultStream(&stream, 0, 1, paFloat32, SAMPLE_RATE, FRAMES_PER_BUFFER, paCallback, mixer);
 	Pa_StartStream(stream);
-	set_note(mixer->synths[0], "g3", 1);
+	//PLACEHOLDERS will be called from Sequencer
+	set_note(mixer->synths[0], 440, 1);
+	Pa_Sleep(1000);
+	set_note(mixer->synths[1], 125, 1);
 	Pa_Sleep(500);
-	set_note(mixer->synths[1], "b3", 1);
-	Pa_Sleep(500);
-	set_note(mixer->synths[0], "d3", 1);
-	Pa_Sleep(500);
-	set_note(mixer->synths[1], "d4", 1);
-	Pa_Sleep(500);
-	set_note(mixer->synths[1], "d4", 0);
-	Pa_Sleep(500);
-	set_note(mixer->synths[2], "g3", 1);
-	Pa_Sleep(500);
-	set_note(mixer->synths[3], "b3", 1);
-	Pa_Sleep(500);
-	set_note(mixer->synths[2], "d3", 1);
-	Pa_Sleep(500);
-	set_note(mixer->synths[3], "d4", 1);
-	Pa_Sleep(500);
-	set_note(mixer->synths[3], "d4", 0);
-	Pa_Sleep(500);
+
 	Pa_StopStream(stream);
 	Pa_CloseStream(stream);
 	Pa_Terminate();
 	destroy_mixer_and_synths(mixer);
-	return (0);
 }

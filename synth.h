@@ -11,10 +11,10 @@
 #define SAMPLE_RATE			48000
 #define FRAMES_PER_BUFFER	256
 #define TABLE_SIZE			2048
-// DELETE?
+// DELETE
 #define NUM_VOICES			4
 
-// DELETE?
+// DELETE
 typedef enum e_track_type
 {
 	SINE,
@@ -39,15 +39,14 @@ typedef struct s_mixer
 	t_synth	**synths;
 }	t_mixer;
 
-// DELETE?
+// DELETE
 typedef struct s_ntof
 {
 	char	*note;
 	double	freq;
 }	t_ntof;
 
-double	note_to_freq(char *note);
-void	set_note(t_synth *synth, char *note, double amplitude);
+void	set_note(t_synth *synth, float freq, double amplitude);
 t_mixer	*create_mixer(int num_voices);
 void	add_synth_to_mixer(t_mixer *mixer, t_synth *synth, int voice_index);
 void	choose_waveform(float *wavetable, t_track_type waveform_type);
