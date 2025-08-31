@@ -2,6 +2,7 @@
 #define SYNTH_H
 
 #include "portaudio.h"
+#include "parser.h"
 #include <math.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -11,17 +12,7 @@
 #define SAMPLE_RATE			48000
 #define FRAMES_PER_BUFFER	256
 #define TABLE_SIZE			2048
-// DELETE
-#define NUM_VOICES			4
-
-// DELETE
-typedef enum e_track_type
-{
-	SINE,
-	SAW,
-	TRIANGLE,
-	SQUARE
-}	t_track_type;
+//#define NUM_VOICES			4
 
 typedef struct s_synth
 {
@@ -39,13 +30,7 @@ typedef struct s_mixer
 	t_synth	**synths;
 }	t_mixer;
 
-// DELETE
-typedef struct s_ntof
-{
-	char	*note;
-	double	freq;
-}	t_ntof;
-
+void	synth(void);
 void	set_note(t_synth *synth, float freq, double amplitude);
 t_mixer	*create_mixer(int num_voices);
 void	add_synth_to_mixer(t_mixer *mixer, t_synth *synth, int voice_index);

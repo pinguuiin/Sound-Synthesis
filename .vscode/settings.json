@@ -1,0 +1,7 @@
+{
+	"files.associations": {
+		"synth.h": "c",
+		"unistd.h": "c",
+		"math.h": "c"
+	}
+}

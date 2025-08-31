@@ -7,6 +7,7 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <math.h>
 
 // Type of supported wave forms
 typedef enum e_track_type

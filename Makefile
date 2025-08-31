@@ -9,7 +9,8 @@ RESET_COLOR=\033[0m
 NAME = midione
 CC = cc
 FLAGS = -Wall -Wextra -Werror -g -O0
-HEADER = -I. libportaudio.a -lrt -lm -lasound -ljack -pthread
+HEADER = -I. libportaudio.a
+LDFLAGS = -lrt -lm -lasound -ljack -pthread
 
 SRCS = main.c \
 		parser.c \
@@ -29,7 +30,7 @@ all: $(NAME)
 	$(CC) $(FLAGS) $(HEADER) -c $< -o $@
 
 $(NAME): $(OBJS)
-	$(CC) $(FLAGS) $(OBJS) -o $(NAME)
+	$(CC) $(FLAGS) $(OBJS) -o $(NAME) $(LDFLAGS)
 	@echo "$(BBLUE)Compiled and linked.$(RESET_COLOR)"
 
 clean:
