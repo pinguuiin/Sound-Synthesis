@@ -13,6 +13,7 @@ HEADER = -I.
 
 SRCS = main.c \
 		parser.c \
+		processor.c \
 		utils.c
 
 OBJS = $(SRCS:.c=.o)
