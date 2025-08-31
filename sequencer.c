@@ -1,12 +1,12 @@
 #include "sequencer.h"
 
-static int64_t	get_current_time(int64_t start_time);
-static int		play_music(t_info *info, int64_t start_time, t_track *tracks);
+static double	get_current_time(double start_time);
+static int		play_music(t_info *info, double start_time, t_track *tracks);
 static void		play_first_note(int num_tracks, t_track *tracks);
 
-void	sound_generator(t_info *info)
+void	sequencer(t_info *info)
 {
-	int64_t	start_time;
+	double	start_time;
 
 	// initialize variables to zero:
 	// important since it is passed to get_current_time()
@@ -31,21 +31,21 @@ void	sound_generator(t_info *info)
 // When called for the starting time, returned time will be in microseconds
 // since the Epoch.
 // For all other calls, it will be in microseconds since start_time.
-static int64_t	get_current_time(int64_t start_time)
+static double	get_current_time(double start_time)
 {
 	struct timeval	time;
 
 	bzero(&time, sizeof(struct timeval));
 	if (gettimeofday(&time, NULL))
 		return (-1);
-	return (time.tv_sec * 1000000 + time.tv_usec - start_time);
+	return ((double)time.tv_sec * 1000000 + time.tv_usec - start_time);
 }
 
 // returns 0 upon success, and -1 upon gettimeofday() failure
-static int	play_music(t_info *info, int64_t start_time, t_track *tracks)
+static int	play_music(t_info *info, double start_time, t_track *tracks)
 {
 	size_t	n_done_playing;
-	int64_t	current_time;
+	double	current_time;
 	size_t	i;
 	t_note	*temp;
 

@@ -32,7 +32,7 @@ static void	handle_tempo(t_info *info, char *line)
 			info->tempo = info->tempo * 10 + (*line) - '0';
 			line++;
 		}
-		info->beat_to_usec = ((float)60 / info->tempo) * 1000000;
+		info->beat_to_usec = ((double)60 / info->tempo) * 1000000;
 	}
 	info->file_pos =TRACKS;
 }
@@ -113,8 +113,7 @@ static void	handle_one_note(t_info *info, char *line)
 	int		i;
 	t_note	*last;
 	t_note	*new_note;
-	float	duration_in_beats;
-	double	temp;
+	double	duration_in_beats;
 
 	i = info->now_track;
 	new_note = malloc(sizeof(t_note));
@@ -133,14 +132,11 @@ static void	handle_one_note(t_info *info, char *line)
 			new_note->octave = *line++ - '0';
 		else
 			new_note->octave = 4;
-		// WARN: The following block converts the duration to milliseconds.
-		// It would offload a lot of work from the sequencer... Is it correct?
 		if (*line == '/')
 			duration_in_beats = strtof(line + 1, NULL);
 		else
 			duration_in_beats = 1;
-		temp = (double)duration_in_beats * info->beat_to_usec;
-		new_note->duration = (int64_t)temp;
+		new_note->duration = duration_in_beats * info->beat_to_usec;
 	}
 	else {
 		while (last->next)
@@ -149,12 +145,10 @@ static void	handle_one_note(t_info *info, char *line)
 			new_note->octave = *line++ - '0';
 		else
 			new_note->octave = last->octave;
-		// WARN: same here, for the conversion to millseconds:
 		if (*line == '/')
 		{
 			duration_in_beats = strtof(line + 1, NULL);
-			temp = (double)duration_in_beats * info->beat_to_usec;
-			new_note->duration = (int64_t)temp;
+			new_note->duration = duration_in_beats * info->beat_to_usec;
 		}
 		else
 			new_note->duration = last->duration;
@@ -165,10 +159,6 @@ static void	handle_one_note(t_info *info, char *line)
 		last->next = new_note;
 	else
 		info->tracks[i].note = new_note;
-	
-	// set the 'temp' t_note pointer to the head of the note linked list?
-	// WARN: Is this correct???
-	info->tracks[i].temp = info->tracks[i].note;
 }
 
 static void	handle_notes(t_info *info, char *line)
@@ -190,6 +180,7 @@ static void	handle_notes(t_info *info, char *line)
 			info->tracks[real_track].num_notes++;
 			info->tracks[real_track].begin = 0;
 		}
+		info->tracks[i].temp = info->tracks[i].note; // set the temp pointer to the head of the linked list
 		while (*line && !isspace(*line) && *line != '|')
 			line++;
 		while (isspace(*line) || *line == '|')
