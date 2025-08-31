@@ -57,7 +57,7 @@ static void	handle_tracks(t_info *info, char *line)
 		{
 			info->tracks[i].sidenote = NULL;
 			info->tracks[i].note = NULL;
-			info->tracks[i].time_of_last_note = 0;
+			info->tracks[i].time_last_note_began = 0;
 			info->tracks[i].id = i + 1;
 			info->tracks[i].num_notes = 0;
 			if (strncmp(line, "saw", 3) == 0){
@@ -180,7 +180,7 @@ static void	handle_notes(t_info *info, char *line)
 			info->tracks[real_track].num_notes++;
 			info->tracks[real_track].begin = 0;
 		}
-		info->tracks[i].temp = info->tracks[i].note; // set the temp pointer to the head of the linked list
+		info->tracks[real_track].note->temp = info->tracks[real_track].note; // set the temp pointer to the head of the linked list
 		while (*line && !isspace(*line) && *line != '|')
 			line++;
 		while (isspace(*line) || *line == '|')

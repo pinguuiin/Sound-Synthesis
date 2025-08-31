@@ -21,7 +21,7 @@ void	sequencer(t_info *info)
 	}
 
 	// main music loop
-	if (play_music(info, start_time) == -1)
+	if (play_music(info, start_time, info->tracks) == -1)
 	{
 		write(2, GET_TIME_FAILURE, sizeof(GET_TIME_FAILURE) - 1);
 		exit (free_info(info));
@@ -70,14 +70,14 @@ static int	play_music(t_info *info, double start_time, t_track *tracks)
 				if ((current_time - tracks[i].time_last_note_began)
 					>= tracks[i].note->duration)
 				{
-					set_note(mixer->synths[i], frequency???, 0.0f); // cut the present note, even if it is a rest.
+					// set_note(mixer->synths[i], frequency???, 0.0f); // cut the present note, even if it is a rest.
 					tracks[i].note->temp = tracks[i].note->next;
 					if (tracks[i].note->temp)
 					{
-						if (tracks[i].note->pitch != "r")
-							set_note(mixer->synths[i], frequency???, 1.0f);
-						else
-							set_note(mixer->synths[i], frequency???, 0.0f);
+						// if (tracks[i].note->pitch != 'r')
+							// set_note(mixer->synths[i], frequency???, 1.0f);
+						// else
+							// set_note(mixer->synths[i], frequency???, 0.0f);
 						tracks[i].time_last_note_began = current_time;
 					}
 					else
@@ -99,10 +99,10 @@ static void	play_first_note(int num_tracks, t_track *tracks)
 	i = 0;
 	while (i < num_tracks)
 	{
-		if (tracks[i].note->pitch != "r")
-			set_note(mixer->synths[i], frequency???, 1.0f);
-		else
-			set_note(mixer->synths[i], frequency???, 0.0f);
+		// if (tracks[i].note->pitch != 'r')
+			// set_note(mixer->synths[i], frequency???, 1.0f);
+		// else
+			// set_note(mixer->synths[i], frequency???, 0.0f);
 		i++;
 	}
 }
