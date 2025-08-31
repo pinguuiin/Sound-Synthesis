@@ -1,4 +1,4 @@
-#include "parser.h"
+#include "midione.h"
 
 static void	pitch_to_frequency(t_note *note)
 {
@@ -26,6 +26,9 @@ static void	pitch_to_frequency(t_note *note)
 		case 'b':
 			n_semi = 2;
 			break ;
+		default:
+			note->f = 1;
+			return ;
 	}
 	if (note->alteration == '#')
 		n_semi += 1;
