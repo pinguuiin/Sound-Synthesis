@@ -62,7 +62,7 @@ typedef struct s_info
 	t_file_pos	file_pos;
 }	t_info;
 
-int		free_info(t_info *info);
+void	free_info(t_info *info);
 void	parser(t_info *info);
 void	processor(t_info *info);
 char	*ft_strjoin(char const *s1, char const *s2);
