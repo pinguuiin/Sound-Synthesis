@@ -18,7 +18,6 @@ SRCS = main.c \
 		processor.c \
 		sequencer.c \
 		waveforms.c \
-		set_note.c \
 		synth.c \
 		mixer.c \
 		utils.c

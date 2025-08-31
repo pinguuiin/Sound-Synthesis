@@ -45,7 +45,7 @@ void	render_synth_to_buffer(t_synth *synth, t_mixer *mixer)
 	while(sample_index < FRAMES_PER_BUFFER)
 	{
 		int wt_idx = (int)(synth->phase * TABLE_SIZE) % TABLE_SIZE;
-		*output_buffer += synth->wavetable[wt_idx] * synth->amplitude * (1.0f / (float) NUM_VOICES);
+		*output_buffer += synth->wavetable[wt_idx] * synth->amplitude * (1.0f / (float) mixer->num_voices);
 		output_buffer++;
 		synth->phase += synth->phaseIncrement;
 		if(synth->phase >= 1.0)
@@ -81,13 +81,14 @@ static int paCallback(const void *inputBuffer, void *outputBuffer,
 	return (paContinue);
 }
 
-void	synth(void)
+void	synth(t_info *info)
 {
 	int	num_voices;
 	int	i;
 	t_synth *synth;
 	//PLACEHOLDERS will get these from parsing:
-	num_voices = NUM_VOICES;
+	num_voices = info->num_tracks;
+	// num_voices = NUM_VOICES
 	t_track_type	track_types[] = {SINE, SQUARE, TRIANGLE, SAW};
 
 	t_mixer	*mixer = create_mixer(num_voices);
