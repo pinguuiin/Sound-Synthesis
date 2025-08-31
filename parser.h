@@ -7,6 +7,7 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <math.h>
 
 // Type of supported wave forms
 typedef enum e_track_type
@@ -29,6 +30,7 @@ typedef enum e_file_pos
 // Information for one note
 typedef struct s_note
 {
+	float			f;  // frequency in Hz
 	char			pitch; // from 'a' to 'g', or 'r' representing a rest
 	char			alteration; // '#' or 'b', '-' if no alteration
 	int				octave; // 0 to 9
@@ -43,6 +45,7 @@ typedef struct s_track
 	t_track_type	type;
 	char			*sidenote;
 	t_note			*note;
+	int				num_notes;
 	int				begin;  //beginning of line, for octave and duration reset in parsing
 }	t_track;
 
@@ -61,6 +64,7 @@ typedef struct s_info
 
 int		free_info(t_info *info);
 void	parser(t_info *info);
+void	processor(t_info *info);
 char	*ft_strjoin(char const *s1, char const *s2);
 
 #endif

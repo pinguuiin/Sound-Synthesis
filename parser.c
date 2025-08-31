@@ -57,6 +57,7 @@ static void	handle_tracks(t_info *info, char *line)
 			info->tracks[i].sidenote = NULL;
 			info->tracks[i].note = NULL;
 			info->tracks[i].id = i + 1;
+			info->tracks[i].num_notes = 0;
 			if (strncmp(line, "saw", 3) == 0){
 				info->tracks[i++].type = SAW;
 				line += 3;
@@ -169,6 +170,7 @@ static void	handle_notes(t_info *info, char *line)
 	while (*line){
 		if (isalpha(*line)){
 			handle_one_note(info, line);
+			info->tracks[real_track].num_notes++;
 			info->tracks[real_track].begin = 0;
 		}
 		while (*line && !isspace(*line) && *line != '|')
