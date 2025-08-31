@@ -1,6 +1,6 @@
 #include "synth.h"
 
-static void generate_sine(float *wavetable)
+static void	generate_sine(float *wavetable)
 {
 	int	i;
 
@@ -12,7 +12,7 @@ static void generate_sine(float *wavetable)
 	}
 }
 
-static void generate_square(float *wavetable)
+static void	generate_square(float *wavetable)
 {
 	int	i;
 
@@ -26,7 +26,7 @@ static void generate_square(float *wavetable)
 		i++;
 	}
 }
-static void generate_triangle(float *wavetable)
+static void	generate_triangle(float *wavetable)
 {
 	int		i;
 	float	t;
@@ -40,7 +40,7 @@ static void generate_triangle(float *wavetable)
 	}
 }
 
-static void generate_saw(float *wavetable)
+static void	generate_saw(float *wavetable)
 {
 	int	i;
 

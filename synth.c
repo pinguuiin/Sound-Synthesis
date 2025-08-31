@@ -55,7 +55,7 @@ static int paCallback(const void *inputBuffer, void *outputBuffer,
 	(void)inputBuffer;
 	(void)timeInfo;
 	(void)statusFlags;
-	
+
 	t_mixer	*mixer;
 	float	*out;
 	int		i;
@@ -83,11 +83,9 @@ int	main(void)
 	num_voices = NUM_VOICES;
 	t_track_type track_types[] = {SINE, SQUARE, TRIANGLE, SAW};
 
-
 	t_mixer *mixer = create_mixer(num_voices);
 	Pa_Initialize();
 	PaStream	*stream;
-
 	i = 0;
 	while(i < num_voices)
 	{
