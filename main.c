@@ -1,6 +1,6 @@
 #include "parser.h"
 
-void	free_info(t_info *info)
+int	free_info(t_info *info)
 {
 	t_note	*temp;
 
@@ -21,6 +21,7 @@ void	free_info(t_info *info)
 		}
 		free(info->tracks);
 	}
+	return (1);
 }
 
 int	main(int argc, char **argv)

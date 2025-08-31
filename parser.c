@@ -32,6 +32,7 @@ static void	handle_tempo(t_info *info, char *line)
 			info->tempo = info->tempo * 10 + (*line) - '0';
 			line++;
 		}
+		info->beat_to_usec = ((float)60 / info->tempo) * 1000000;
 	}
 	info->file_pos =TRACKS;
 }
@@ -111,6 +112,7 @@ static void	handle_one_note(t_info *info, char *line)
 	int		i;
 	t_note	*last;
 	t_note	*new_note;
+	float	duration_in_beats;
 
 	i = info->now_track;
 	new_note = malloc(sizeof(t_note));
@@ -129,10 +131,13 @@ static void	handle_one_note(t_info *info, char *line)
 			new_note->octave = *line++ - '0';
 		else
 			new_note->octave = 4;
+		// WARN: The following block converts the duration to milliseconds.
+		// It would offload a lot of work from the sequencer... Is it correct?
 		if (*line == '/')
-			new_note->duration = strtof(line + 1, NULL);
+			duration_in_beats = strtof(line + 1, NULL);
 		else
-			new_note->duration = 1;
+			duration_in_beats = 1;
+		new_note->duration = (double)duration_in_beats * info->beat_to_usec;
 	}
 	else {
 		while (last->next)
@@ -141,8 +146,12 @@ static void	handle_one_note(t_info *info, char *line)
 			new_note->octave = *line++ - '0';
 		else
 			new_note->octave = last->octave;
+		// WARN: same here, for the conversion to millseconds:
 		if (*line == '/')
-			new_note->duration = strtof(line + 1, NULL);
+		{
+			duration_in_beats = strtof(line + 1, NULL);
+			new_note->duration = (double)duration_in_beats * info->beat_to_usec;
+		}
 		else
 			new_note->duration = last->duration;
 	}
@@ -152,6 +161,10 @@ static void	handle_one_note(t_info *info, char *line)
 		last->next = new_note;
 	else
 		info->tracks[i].note = new_note;
+	
+	// set the 'temp' t_note pointer to the head of the note linked list?
+	// WARN: Is this correct???
+	info->tracks[i].temp = info->tracks[i].note;
 }
 
 static void	handle_notes(t_info *info, char *line)

@@ -1,7 +1,7 @@
 #include <sequencer.h>
 
 static int64_t	get_current_time(int64_t start_time);
-static int		play_music(t_info *info, int64_t start_time, float beat_to_usec);
+static int		play_music(t_info *info, int64_t start_time);
 
 // WARN: For each and every note:
 // 		Determine the "attack" moment and the "release / cut" moment.
@@ -13,6 +13,32 @@ static int		play_music(t_info *info, int64_t start_time, float beat_to_usec);
 // 		in any case is not that bad.
 void	sound_generator(t_info *info)
 {
+	int64_t	start_time;
+
+	// initialize variables to zero.
+	start_time = 0;
+
+
+	// set the starting time
+	start_time = get_current_time(start_time);
+	if (start_time == -1)
+	{
+		write(2, GET_TIME_FAILURE, sizeof(GET_TIME_FAILURE) - 1);
+		exit (free_info(info));
+	}
+
+	// main music loop
+	if (play_music(info, start_time, beat_to_usec) == -1)
+	{
+		write(2, GET_TIME_FAILURE, sizeof(GET_TIME_FAILURE) - 1);
+		exit (free_info(info));
+	}
+}
+
+/*
+* previous version, which calculates the beat_to_usec factor, here:
+void	sound_generator(t_info *info)
+{
 	float	beat_to_usec;
 	int64_t	start_time;
 
@@ -21,7 +47,7 @@ void	sound_generator(t_info *info)
 
 	// calculate the factor which will allow conversion of note duration into
 	// milliseconds
-	beat_to_usec = 60 / info->tempo * 1000000;
+	beat_to_usec = ((float)60 / info->tempo) * 1000000;
 
 
 	// set the starting time
@@ -29,21 +55,20 @@ void	sound_generator(t_info *info)
 	if (start_time == -1)
 	{
 		write(2, GET_TIME_FAILURE, sizeof(GET_TIME_FAILURE) - 1);
-		free_info(info);
-		exit (1);
+		exit (free_info(info));
 	}
 
 	// main music loop
 	if (play_music(info, start_time, beat_to_usec) == -1)
 	{
 		write(2, GET_TIME_FAILURE, sizeof(GET_TIME_FAILURE) - 1);
-		free_info(info);
-		exit (1);
+		exit (free_info(info));
 	}
 }
+*/
 
 // returns 0 upon success, and -1 upon gettimeofday() failure
-static int	play_music(t_info *info, int64_t start_time, float beat_to_usec)
+static int	play_music(t_info *info, int64_t start_time)
 {
 	size_t	n_done_playing;
 	int64_t	current_time;

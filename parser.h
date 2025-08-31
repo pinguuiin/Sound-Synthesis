@@ -34,8 +34,9 @@ typedef struct s_note
 	char			pitch; // from 'a' to 'g', or 'r' representing a rest
 	char			alteration; // '#' or 'b', '-' if no alteration
 	int				octave; // 0 to 9
-	float			duration; // duration in beats
+	double			duration; // duration in microseconds
 	struct s_note	*next;
+	struct s_note	*temp;
 }	t_note;
 
 // Description and notes contained in each track
@@ -56,13 +57,14 @@ typedef struct s_info
 	char		*line;  //current line been read
 	char		*name;
 	int			tempo;
+	double		beat_to_usec;
 	int			num_tracks;
 	int			now_track;  // current track the reading position at
 	t_track		*tracks;
 	t_file_pos	file_pos;
 }	t_info;
 
-void	free_info(t_info *info);
+int		free_info(t_info *info);
 void	parser(t_info *info);
 void	processor(t_info *info);
 char	*ft_strjoin(char const *s1, char const *s2);
