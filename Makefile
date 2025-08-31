@@ -9,11 +9,16 @@ RESET_COLOR=\033[0m
 NAME = midione
 CC = cc
 FLAGS = -Wall -Wextra -Werror -g -O0
-HEADER = -I.
+HEADER = -I. libportaudio.a -lrt -lm -lasound -ljack -pthread
 
 SRCS = main.c \
 		parser.c \
-		utils.c
+		utils.c \
+		synth.c \
+		set_note.c \
+		waveforms.c \
+		mixer.c
+
 
 OBJS = $(SRCS:.c=.o)
 
