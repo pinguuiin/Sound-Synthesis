@@ -11,6 +11,7 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror -g -O0
 LDFLAGS = libportaudio.a -lrt -lm -lasound -ljack -pthread
 HEADER = -I.
+LDFLAGS = -lrt -lm -lasound -ljack -pthread
 
 SRCS = main.c \
 		parser.c \
