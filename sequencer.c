@@ -70,14 +70,14 @@ static int	play_music(t_info *info, int64_t start_time, t_track *tracks)
 				if ((current_time - tracks[i].time_last_note_began)
 					>= tracks[i].note->duration)
 				{
-					set_note(????, 0.0); // cut the present note, even if it is a rest.  // TODO: get the prototype and complete
+					set_note(mixer->synths[i], frequency???, 0.0f); // cut the present note, even if it is a rest.
 					tracks[i].note->temp = tracks[i].note->next;
 					if (tracks[i].note->temp)
 					{
 						if (tracks[i].note->pitch != "r")
-							set_note(tracks[i].note->temp, 0.5); // TODO: get the prototype and complete
+							set_note(mixer->synths[i], frequency???, 1.0f);
 						else
-							set_note(tracks[i].note->temp, 0.0); // TODO: get the prototype and complete
+							set_note(mixer->synths[i], frequency???, 0.0f);
 						tracks[i].time_last_note_began = current_time;
 					}
 					else
@@ -100,9 +100,9 @@ static void	play_first_note(int num_tracks, t_track *tracks)
 	while (i < num_tracks)
 	{
 		if (tracks[i].note->pitch != "r")
-			set_note(tracks[i].note->temp, 0.5); // TODO: get the prototype and complete
+			set_note(mixer->synths[i], frequency???, 1.0f);
 		else
-			set_note(tracks[i].note->temp, 0.0); // TODO: get the prototype and complete
+			set_note(mixer->synths[i], frequency???, 0.0f);
 		i++;
 	}
 }
