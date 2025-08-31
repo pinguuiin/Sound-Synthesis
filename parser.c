@@ -32,6 +32,7 @@ static void	handle_tempo(t_info *info, char *line)
 			info->tempo = info->tempo * 10 + (*line) - '0';
 			line++;
 		}
+		info->beat_to_usec = ((double)60 / info->tempo) * 1000000;
 	}
 	info->file_pos =TRACKS;
 }
@@ -56,6 +57,7 @@ static void	handle_tracks(t_info *info, char *line)
 		{
 			info->tracks[i].sidenote = NULL;
 			info->tracks[i].note = NULL;
+			info->tracks[i].time_last_note_began = 0;
 			info->tracks[i].id = i + 1;
 			info->tracks[i].num_notes = 0;
 			if (strncmp(line, "saw", 3) == 0){
@@ -111,6 +113,7 @@ static void	handle_one_note(t_info *info, char *line)
 	int		i;
 	t_note	*last;
 	t_note	*new_note;
+	double	duration_in_beats;
 
 	i = info->now_track;
 	new_note = malloc(sizeof(t_note));
@@ -130,9 +133,10 @@ static void	handle_one_note(t_info *info, char *line)
 		else
 			new_note->octave = 4;
 		if (*line == '/')
-			new_note->duration = strtof(line + 1, NULL);
+			duration_in_beats = strtof(line + 1, NULL);
 		else
-			new_note->duration = 1;
+			duration_in_beats = 1;
+		new_note->duration = duration_in_beats * info->beat_to_usec;
 	}
 	else {
 		while (last->next)
@@ -142,7 +146,10 @@ static void	handle_one_note(t_info *info, char *line)
 		else
 			new_note->octave = last->octave;
 		if (*line == '/')
-			new_note->duration = strtof(line + 1, NULL);
+		{
+			duration_in_beats = strtof(line + 1, NULL);
+			new_note->duration = duration_in_beats * info->beat_to_usec;
+		}
 		else
 			new_note->duration = last->duration;
 	}
@@ -173,6 +180,7 @@ static void	handle_notes(t_info *info, char *line)
 			info->tracks[real_track].num_notes++;
 			info->tracks[real_track].begin = 0;
 		}
+		info->tracks[real_track].note->temp = info->tracks[real_track].note; // set the temp pointer to the head of the linked list
 		while (*line && !isspace(*line) && *line != '|')
 			line++;
 		while (isspace(*line) || *line == '|')

@@ -9,11 +9,13 @@ RESET_COLOR=\033[0m
 NAME = midione
 CC = cc
 FLAGS = -Wall -Wextra -Werror -g -O0
+LDFLAGS = -lm
 HEADER = -I.
 
 SRCS = main.c \
 		parser.c \
 		processor.c \
+		sequencer.c \
 		utils.c
 
 OBJS = $(SRCS:.c=.o)
@@ -26,7 +28,7 @@ all: $(NAME)
 	$(CC) $(FLAGS) $(HEADER) -c $< -o $@
 
 $(NAME): $(OBJS)
-	$(CC) $(FLAGS) $(OBJS) -o $(NAME)
+	$(CC) $(FLAGS) $(OBJS) -o $(NAME) $(LDFLAGS)
 	@echo "$(BBLUE)Compiled and linked.$(RESET_COLOR)"
 
 clean:

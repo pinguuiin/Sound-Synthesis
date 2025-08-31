@@ -39,7 +39,7 @@ int	main(int argc, char **argv)
 	}
 	parser(&info);
 	processor(&info);
-	// sound_generator(info);
+	sequencer(&info);
 	free_info(&info);
 	return (0);
 }
