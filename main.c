@@ -39,6 +39,8 @@ int	main(int argc, char **argv)
 	}
 	parser(&info);
 	// sound_generator(info);
+	// synthesis
+	synth();
 	free_info(&info);
 	return (0);
 }
