@@ -1,18 +1,23 @@
 #include "synth.h"
 
-void	add_synth_to_mixer(t_mixer *mixer, t_synth *synth, int voice_index)
+void	add_synth_to_mixer(t_mixer *mixer, t_synth synth, int voice_index)
 {
 	if(voice_index < mixer->num_voices)
 		mixer->synths[voice_index] = synth;
 }
 
-t_mixer	*create_mixer(int num_voices)
+void	create_mixer(t_info *info, t_mixer *mixer, int num_voices)
 {
-	t_mixer	*mixer = malloc(sizeof(t_mixer));
-	mixer->mixbuffer = malloc(FRAMES_PER_BUFFER * sizeof(float));
+	mixer->info = info;
 	mixer->num_voices = num_voices;
-	mixer->synths = malloc(num_voices * sizeof(t_synth*));
-	return (mixer);
+	mixer->mixbuffer = NULL;
+	mixer->synths = NULL;
+	mixer->mixbuffer = malloc(FRAMES_PER_BUFFER * sizeof(float));
+	mixer->synths = malloc(num_voices * sizeof(t_synth));
+	if (!mixer->mixbuffer || !mixer->synths)
+		destroy_mixer_and_synths(mixer);
+	for (int i = 0; i < num_voices; i++)
+		mixer->synths[i].wavetable = NULL;
 }
 
 void	destroy_mixer_and_synths(t_mixer *mixer)
@@ -20,16 +25,17 @@ void	destroy_mixer_and_synths(t_mixer *mixer)
 	int	i;
 	
 	i = 0;
-	while(i < mixer->num_voices)
+	if (mixer->synths)
 	{
-		if(mixer->synths[i] != NULL)
+		while(i < mixer->num_voices)
 		{
-			free(mixer->synths[i]->wavetable);
-			free(mixer->synths[i]);
+			if (mixer->synths[i].wavetable)
+				free(mixer->synths[i].wavetable);
+			i++;
 		}
-		i++;
+		free(mixer->synths);
 	}
-	free(mixer->synths);
-	free(mixer->mixbuffer);
-	free(mixer);
+	if (mixer->mixbuffer)
+		free(mixer->mixbuffer);
+	free_info(mixer->info);
 }

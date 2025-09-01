@@ -12,7 +12,6 @@
 #define SAMPLE_RATE			48000
 #define FRAMES_PER_BUFFER	256
 #define TABLE_SIZE			2048
-// #define NUM_VOICES			4
 
 typedef struct s_synth
 {
@@ -25,15 +24,16 @@ typedef struct s_synth
 
 typedef struct s_mixer
 {
+	t_info	*info;
 	float	*mixbuffer;
 	int		num_voices;
-	t_synth	**synths;
+	t_synth	*synths;
 }	t_mixer;
 
 void	synth(t_info *info);
 void	set_note(t_synth *synth, float freq, double amplitude);
-t_mixer	*create_mixer(int num_voices);
-void	add_synth_to_mixer(t_mixer *mixer, t_synth *synth, int voice_index);
+void	create_mixer(t_info *info, t_mixer *mixer, int num_voices);
+void	add_synth_to_mixer(t_mixer *mixer, t_synth synth, int voice_index);
 void	choose_waveform(float *wavetable, t_track_type waveform_type);
 void	render_synth_to_buffer(t_synth *synth, t_mixer *mixer);
 void	destroy_mixer_and_synths(t_mixer *mixer);
