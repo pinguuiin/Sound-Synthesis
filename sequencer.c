@@ -61,27 +61,24 @@ static int	play_music(t_info *info, double start_time, t_track *tracks, t_mixer 
 		// If volume is 0.5, the instrument will play the note.
 		// If volume is 0, the instrument will stop playing the note.
 
-		#include <stdio.h>
-		printf("We are here!!!\n");
+		current_time = get_current_time(start_time);
+		if (current_time == -1)
+			return (-1);
 		while (i < info->num_tracks)
 		{
-			printf("value of i:		<%d>\n", i);
-			current_time = get_current_time(start_time);
-			if (current_time == -1)
-				return (-1);
 			if (tracks[i].note->temp)
 			{
 				if ((current_time - tracks[i].time_last_note_began)
 					>= tracks[i].note->duration)
 				{
-					set_note(mixer->synths[i], info->tracks[i].note->f, 0.0f); // cut the present note, even if it is a rest.
+					set_note(mixer->synths[i], info->tracks[i].note->temp->f, 0.0f); // cut the present note, even if it is a rest.
 					tracks[i].note->temp = tracks[i].note->next;
 					if (tracks[i].note->temp)
 					{
 						if (tracks[i].note->pitch != 'r')
-							set_note(mixer->synths[i], info->tracks[i].note->f, 1.0f);
+							set_note(mixer->synths[i], info->tracks[i].note->temp->f, 1.0f);
 						else
-							set_note(mixer->synths[i], info->tracks[i].note->f, 0.0f);
+							set_note(mixer->synths[i], info->tracks[i].note->temp->f, 0.0f);
 						tracks[i].time_last_note_began = current_time;
 					}
 					else
@@ -91,6 +88,9 @@ static int	play_music(t_info *info, double start_time, t_track *tracks, t_mixer 
 			i++;
 		}
 		i = 0;
+
+
+		printf("\n\n\n\n\n");
 		usleep(1000);	// sleep in order to avoid unnecessary spinning by system resources
 	}
 	return (0);
@@ -104,9 +104,9 @@ static void	play_first_note(int num_tracks, t_track *tracks, t_mixer *mixer)
 	while (i < num_tracks)
 	{
 		if (tracks[i].note->pitch != 'r')
-			set_note(mixer->synths[i], tracks[i].note->f, 1.0f);
+			set_note(mixer->synths[i], tracks[i].note->temp->f, 1.0f);
 		else
-			set_note(mixer->synths[i], tracks[i].note->f, 0.0f);
+			set_note(mixer->synths[i], tracks[i].note->temp->f, 0.0f);
 		i++;
 	}
 }
