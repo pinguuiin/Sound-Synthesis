@@ -1,10 +1,11 @@
 #include "sequencer.h"
+#include "synth.h"
 
 static double	get_current_time(double start_time);
 static int		play_music(t_info *info, double start_time, t_track *tracks);
 static void		play_first_note(int num_tracks, t_track *tracks);
 
-void	sequencer(t_info *info)
+void	sequencer(t_info *info, t_mixer *mixer)
 {
 	double	start_time;
 
@@ -17,14 +18,14 @@ void	sequencer(t_info *info)
 	if (start_time == -1)
 	{
 		write(2, GET_TIME_FAILURE, sizeof(GET_TIME_FAILURE) - 1);
-		exit (free_info(info));
+		exit (destroy_mixer_and_info(mixer));
 	}
 
 	// main music loop
 	if (play_music(info, start_time, info->tracks) == -1)
 	{
 		write(2, GET_TIME_FAILURE, sizeof(GET_TIME_FAILURE) - 1);
-		exit (free_info(info));
+		exit (destroy_mixer_and_info(mixer));
 	}
 }
 

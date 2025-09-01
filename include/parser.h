@@ -1,6 +1,7 @@
 #ifndef PARSER_H
 # define PARSER_H
 
+#include "synth.h"
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
@@ -68,7 +69,7 @@ typedef struct s_info
 int		free_info(t_info *info);
 void	parser(t_info *info);
 void	processor(t_info *info);
-void	sequencer(t_info *info);
+void	sequencer(t_info *info, t_mixer *mixer);
 char	*ft_strjoin(char const *s1, char const *s2);
 
 #endif

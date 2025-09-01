@@ -6,7 +6,7 @@ t_synth	create_synth(t_mixer *mixer, t_track_type waveform_type)
 
 	synth.wavetable = malloc(TABLE_SIZE * sizeof(float));
 	if (!synth.wavetable)
-		destroy_mixer_and_synths(mixer);
+		exit(destroy_mixer_and_info(mixer));
 	synth.phase = 0.0;
 	synth.phaseIncrement = 0.1;
 	synth.amplitude = 0.0;
@@ -63,30 +63,37 @@ static int paCallback(const void *inputBuffer, void *outputBuffer,
 	return (paContinue);
 }
 
-void	synth(t_info *info)
+void	init_synth(t_info *info, t_mixer *mixer)
 {
 	int			i;
 	t_synth 	synth;
-	PaStream	*stream;
-	t_mixer		mixer;
 
-	Pa_Initialize(); //what if fail?
-	create_mixer(info, &mixer, info->num_tracks);
+	create_mixer(info, mixer, info->num_tracks);
 	for (i = 0; i < info->num_tracks; i++)
 	{
-		synth = create_synth(&mixer, info->tracks[i].type);
-		add_synth_to_mixer(&mixer, synth, i);
+		synth = create_synth(mixer, info->tracks[i].type);
+		add_synth_to_mixer(mixer, synth, i);
 	}
-	Pa_OpenDefaultStream(&stream, 0, 1, paFloat32, SAMPLE_RATE, FRAMES_PER_BUFFER, paCallback, &mixer);
+}
+
+// This function will be separated by Yonatan
+void	synth(t_mixer *mixer)
+{
+	PaStream	*stream;
+
+	// This part being called when the Sequencer starts
+	Pa_Initialize(); //what if fail?
+	Pa_OpenDefaultStream(&stream, 0, 1, paFloat32, SAMPLE_RATE, FRAMES_PER_BUFFER, paCallback, mixer);
 	Pa_StartStream(stream);
-	//PLACEHOLDERS will be called from Sequencer
-	set_note(&(mixer.synths[0]), 440, 1);
+
+	//PLACEHOLDERS being called from Sequencer when the key is pressed
+	set_note(&(mixer->synths[0]), 440, 1);
 	Pa_Sleep(1000);
-	set_note(&(mixer.synths[1]), 125, 1);
+	set_note(&(mixer->synths[1]), 125, 1);
 	Pa_Sleep(500);
 
+	// Being called when all tracks finish playing
 	Pa_StopStream(stream);
 	Pa_CloseStream(stream);
 	Pa_Terminate();
-	destroy_mixer_and_synths(&mixer);
 }
