@@ -6,12 +6,12 @@ void	add_synth_to_mixer(t_mixer *mixer, t_synth *synth, int voice_index)
 		mixer->synths[voice_index] = synth;
 }
 
-t_mixer	*create_mixer(int num_voices)
+t_mixer	*create_mixer(t_info *info)
 {
 	t_mixer	*mixer = malloc(sizeof(t_mixer));
 	mixer->mixbuffer = malloc(FRAMES_PER_BUFFER * sizeof(float));
-	mixer->num_voices = num_voices;
-	mixer->synths = malloc(num_voices * sizeof(t_synth*));
+	mixer->num_voices = info->num_tracks;
+	mixer->synths = malloc(info->num_tracks * sizeof(t_synth*));
 	return (mixer);
 }
 

@@ -38,7 +38,7 @@ static void	pitch_to_frequency(t_note *note)
 void	processor(t_info *info)
 {
 	t_note	*temp;
-
+	printf("Processing....\n");
 	for (int i = 0; i < info->num_tracks; i++){
 		temp = info->tracks[i].note;
 		while (temp){

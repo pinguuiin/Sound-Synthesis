@@ -7,7 +7,7 @@ static void		play_first_note(int num_tracks, t_track *tracks);
 void	sequencer(t_info *info)
 {
 	double	start_time;
-
+	printf("Sequencing...\n");
 	// initialize variables to zero:
 	// important since it is passed to get_current_time()
 	start_time = 0;

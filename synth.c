@@ -45,7 +45,7 @@ void	render_synth_to_buffer(t_synth *synth, t_mixer *mixer)
 	while(sample_index < FRAMES_PER_BUFFER)
 	{
 		int wt_idx = (int)(synth->phase * TABLE_SIZE) % TABLE_SIZE;
-		*output_buffer += synth->wavetable[wt_idx] * synth->amplitude * (1.0f / (float) NUM_VOICES);
+		*output_buffer += synth->wavetable[wt_idx] * synth->amplitude * (1.0f / (float) mixer->num_voices);
 		output_buffer++;
 		synth->phase += synth->phaseIncrement;
 		if(synth->phase >= 1.0)
@@ -81,35 +81,37 @@ static int paCallback(const void *inputBuffer, void *outputBuffer,
 	return (paContinue);
 }
 
-void	synth(void)
+t_mixer	*synth_init(t_info *info)
 {
-	int	num_voices;
 	int	i;
 	t_synth *synth;
-	//PLACEHOLDERS will get these from parsing:
-	num_voices = NUM_VOICES;
-	t_track_type	track_types[] = {SINE, SQUARE, TRIANGLE, SAW};
-
-	t_mixer	*mixer = create_mixer(num_voices);
+	t_mixer	*mixer;
+	
+	// Create mixer with parsed num_tracks
+	mixer = create_mixer(info);
+	
+	// Initialize PortAudio
 	Pa_Initialize();
-	PaStream	*stream;
+	
+	// Create synths for each track
 	i = 0;
-	while(i < num_voices)
+	while(i < info->num_tracks)
 	{
-		synth = create_synth(track_types[i]);
+		synth = create_synth(info->tracks[i].type);
 		add_synth_to_mixer(mixer, synth, i);
- 		i++;
+		i++;
 	}
-	Pa_OpenDefaultStream(&stream, 0, 1, paFloat32, SAMPLE_RATE, FRAMES_PER_BUFFER, paCallback, mixer);
-	Pa_StartStream(stream);
-	//PLACEHOLDERS will be called from Sequencer
-	set_note(mixer->synths[0], 440, 1);
-	Pa_Sleep(1000);
-	set_note(mixer->synths[1], 125, 1);
-	Pa_Sleep(500);
+	Pa_OpenDefaultStream(&mixer->stream, 0, 1, paFloat32, SAMPLE_RATE, FRAMES_PER_BUFFER, paCallback, mixer);
+	Pa_StartStream(mixer->stream);
+	return (mixer);
+}
 
-	Pa_StopStream(stream);
-	Pa_CloseStream(stream);
+void	synth_destroy(t_mixer *mixer)
+{
+	if (!mixer) return ;
+	
+	Pa_StopStream(mixer->stream);
+	Pa_CloseStream(mixer->stream);
 	Pa_Terminate();
 	destroy_mixer_and_synths(mixer);
 }

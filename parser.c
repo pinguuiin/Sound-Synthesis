@@ -231,6 +231,7 @@ static void	parse_line(t_info  *info, char *line)
 
 void	parser(t_info *info)
 {
+	printf("Parsing...\n");
 	size_t	len;
 
 	len = 0;

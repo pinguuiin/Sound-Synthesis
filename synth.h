@@ -25,14 +25,18 @@ typedef struct s_synth
 
 typedef struct s_mixer
 {
-	float	*mixbuffer;
-	int		num_voices;
-	t_synth	**synths;
+	float		*mixbuffer;
+	int			num_voices;
+	t_synth		**synths;
+	PaStream	*stream;
 }	t_mixer;
 
-void	synth(void);
+t_mixer	*synth_init(t_info *info);
 void	set_note(t_synth *synth, float freq, double amplitude);
-t_mixer	*create_mixer(int num_voices);
+void	synth_destroy(t_mixer *mixer);
+
+void	synth(t_info *info);
+t_mixer	*create_mixer(t_info *info);
 void	add_synth_to_mixer(t_mixer *mixer, t_synth *synth, int voice_index);
 void	choose_waveform(float *wavetable, t_track_type waveform_type);
 void	render_synth_to_buffer(t_synth *synth, t_mixer *mixer);
