@@ -39,8 +39,8 @@ int	main(int argc, char **argv)
 	}
 	parser(&info);
 	processor(&info);
-	sequencer(&info);
 	synth(&info); // WARN: check!
+	//sequencer(&info);
 	free_info(&info);
 	return (0);
 }
