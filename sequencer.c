@@ -61,8 +61,11 @@ static int	play_music(t_info *info, double start_time, t_track *tracks, t_mixer 
 		// If volume is 0.5, the instrument will play the note.
 		// If volume is 0, the instrument will stop playing the note.
 
+		#include <stdio.h>
+		printf("We are here!!!\n");
 		while (i < info->num_tracks)
 		{
+			printf("value of i:		<%d>\n", i);
 			current_time = get_current_time(start_time);
 			if (current_time == -1)
 				return (-1);
