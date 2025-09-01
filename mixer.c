@@ -1,4 +1,4 @@
-#include "synth.h"
+#include "parser.h"
 
 void	add_synth_to_mixer(t_mixer *mixer, t_synth *synth, int voice_index)
 {

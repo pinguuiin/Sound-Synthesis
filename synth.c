@@ -1,4 +1,4 @@
-#include "synth.h"
+#include "parser.h"
 
 t_synth	*create_synth(t_track_type waveform_type)
 {

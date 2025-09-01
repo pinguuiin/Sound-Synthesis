@@ -1,5 +1,4 @@
  #include "parser.h"
- #include "synth.h"
 
 int	free_info(t_info *info)
 {
