@@ -1,5 +1,4 @@
-#include "sequencer.h"
-#include "synth.h"
+#include "midione.h"
 
 static double	get_current_time(double start_time);
 static int		play_music(t_info *info, double start_time, t_track *tracks);
@@ -103,7 +102,7 @@ static void	play_first_note(int num_tracks, t_track *tracks)
 		{
 			usleep(100); // WARN: this is just a placeholder to let the program
 									// compile since set_note() is missing!
-			
+
 			// set_note(mixer->synths[i], frequency???, 1.0f);
 		}
 		else

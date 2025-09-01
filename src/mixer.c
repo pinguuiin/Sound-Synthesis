@@ -1,4 +1,4 @@
-#include "synth.h"
+#include "midione.h"
 
 void	add_synth_to_mixer(t_mixer *mixer, t_synth synth, int voice_index)
 {
@@ -23,7 +23,7 @@ void	create_mixer(t_info *info, t_mixer *mixer, int num_voices)
 int	destroy_mixer_and_info(t_mixer *mixer)
 {
 	int	i;
-	
+
 	i = 0;
 	if (mixer->synths)
 	{

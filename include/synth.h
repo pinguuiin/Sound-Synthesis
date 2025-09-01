@@ -1,13 +1,7 @@
 #ifndef SYNTH_H
 #define SYNTH_H
 
-#include "portaudio.h"
 #include "parser.h"
-#include <math.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 
 #define SAMPLE_RATE			48000
 #define FRAMES_PER_BUFFER	256

@@ -1,4 +1,4 @@
-#include "synth.h"
+#include "midione.h"
 
 t_synth	create_synth(t_mixer *mixer, t_track_type waveform_type)
 {
