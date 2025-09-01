@@ -25,6 +25,7 @@ typedef struct s_mixer
 }	t_mixer;
 
 void	init_synth(t_info *info, t_mixer *mixer);
+void	synth(t_mixer *mixer);
 void	set_note(t_synth *synth, float freq, double amplitude);
 void	create_mixer(t_info *info, t_mixer *mixer, int num_voices);
 void	add_synth_to_mixer(t_mixer *mixer, t_synth synth, int voice_index);
