@@ -1,5 +1,5 @@
-#include "parser.h"
-#include "synth.h"
+ #include "parser.h"
+ #include "synth.h"
 
 int	free_info(t_info *info)
 {
@@ -43,17 +43,7 @@ int	main(int argc, char **argv)
 	parser(&info);
 	processor(&info);
 	t_mixer	*mixer = synth_init(&info);
-	//sequencer(&info);
-	if (info.num_tracks > 0 && info.tracks[0].note)
-	{
-	    printf("Playing first note: freq=%f\n", info.tracks[0].note->f);
-	    set_note(mixer->synths[0], info.tracks[0].note->f, 1.0);
-	    usleep(1000000);
-		set_note(mixer->synths[1], info.tracks[1].note->f, 1.0);
-	    usleep(1000000);
-	    set_note(mixer->synths[0], info.tracks[0].note->f, 0.0);
-		set_note(mixer->synths[1], info.tracks[1].note->f, 0.0);
-	}
+	sequencer(&info, mixer);
 	synth_destroy(mixer);
 	free_info(&info);
 	return (0);

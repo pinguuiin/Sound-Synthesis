@@ -35,7 +35,7 @@ t_mixer	*synth_init(t_info *info);
 void	set_note(t_synth *synth, float freq, double amplitude);
 void	synth_destroy(t_mixer *mixer);
 
-void	synth(t_info *info);
+// void	synth(t_info *info);
 t_mixer	*create_mixer(t_info *info);
 void	add_synth_to_mixer(t_mixer *mixer, t_synth *synth, int voice_index);
 void	choose_waveform(float *wavetable, t_track_type waveform_type);

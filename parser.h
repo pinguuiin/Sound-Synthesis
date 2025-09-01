@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <math.h>
+ #include "synth.h"
 
 // Type of supported wave forms
 typedef enum e_track_type
@@ -68,7 +69,7 @@ typedef struct s_info
 int		free_info(t_info *info);
 void	parser(t_info *info);
 void	processor(t_info *info);
-void	sequencer(t_info *info);
 char	*ft_strjoin(char const *s1, char const *s2);
+void	sequencer(t_info *info, t_mixer *mixer);
 
 #endif

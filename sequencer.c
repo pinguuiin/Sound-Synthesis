@@ -1,10 +1,10 @@
 #include "sequencer.h"
 
 static double	get_current_time(double start_time);
-static int		play_music(t_info *info, double start_time, t_track *tracks);
-static void		play_first_note(int num_tracks, t_track *tracks);
+static int		play_music(t_info *info, double start_time, t_track *tracks, t_mixer *mixer);
+static void		play_first_note(int num_tracks, t_track *tracks, t_mixer *mixer);
 
-void	sequencer(t_info *info)
+void	sequencer(t_info *info, t_mixer *mixer)
 {
 	double	start_time;
 	printf("Sequencing...\n");
@@ -17,13 +17,15 @@ void	sequencer(t_info *info)
 	if (start_time == -1)
 	{
 		write(2, GET_TIME_FAILURE, sizeof(GET_TIME_FAILURE) - 1);
+		synth_destroy(mixer);
 		exit (free_info(info));
 	}
 
 	// main music loop
-	if (play_music(info, start_time, info->tracks) == -1)
+	if (play_music(info, start_time, info->tracks, mixer) == -1)
 	{
 		write(2, GET_TIME_FAILURE, sizeof(GET_TIME_FAILURE) - 1);
+		synth_destroy(mixer);
 		exit (free_info(info));
 	}
 }
@@ -42,7 +44,7 @@ static double	get_current_time(double start_time)
 }
 
 // returns 0 upon success, and -1 upon gettimeofday() failure
-static int	play_music(t_info *info, double start_time, t_track *tracks)
+static int	play_music(t_info *info, double start_time, t_track *tracks, t_mixer *mixer)
 {
 	int		n_done_playing;
 	double	current_time;
@@ -51,7 +53,7 @@ static int	play_music(t_info *info, double start_time, t_track *tracks)
 	n_done_playing = 0;
 	i = 0;
 
-	play_first_note(info->num_tracks, tracks);
+	play_first_note(info->num_tracks, tracks, mixer);
 	while (n_done_playing < info->num_tracks)
 	{
 		// NOTE: usage of the sound function:
@@ -69,14 +71,14 @@ static int	play_music(t_info *info, double start_time, t_track *tracks)
 				if ((current_time - tracks[i].time_last_note_began)
 					>= tracks[i].note->duration)
 				{
-					// set_note(mixer->synths[i], frequency???, 0.0f); // cut the present note, even if it is a rest.
+					set_note(mixer->synths[i], info->tracks[i].note->f, 0.0f); // cut the present note, even if it is a rest.
 					tracks[i].note->temp = tracks[i].note->next;
 					if (tracks[i].note->temp)
 					{
-						// if (tracks[i].note->pitch != 'r')
-							// set_note(mixer->synths[i], frequency???, 1.0f);
-						// else
-							// set_note(mixer->synths[i], frequency???, 0.0f);
+						if (tracks[i].note->pitch != 'r')
+							set_note(mixer->synths[i], info->tracks[i].note->f, 1.0f);
+						else
+							set_note(mixer->synths[i], info->tracks[i].note->f, 0.0f);
 						tracks[i].time_last_note_began = current_time;
 					}
 					else
@@ -91,7 +93,7 @@ static int	play_music(t_info *info, double start_time, t_track *tracks)
 	return (0);
 }
 
-static void	play_first_note(int num_tracks, t_track *tracks)
+static void	play_first_note(int num_tracks, t_track *tracks, t_mixer *mixer)
 {
 	int	i;
 
@@ -99,14 +101,9 @@ static void	play_first_note(int num_tracks, t_track *tracks)
 	while (i < num_tracks)
 	{
 		if (tracks[i].note->pitch != 'r')
-		{
-			usleep(100); // WARN: this is just a placeholder to let the program
-									// compile since set_note() is missing!
-			
-			// set_note(mixer->synths[i], frequency???, 1.0f);
-		}
+			set_note(mixer->synths[i], tracks[i].note->f, 1.0f);
 		else
-			// set_note(mixer->synths[i], frequency???, 0.0f);
+			set_note(mixer->synths[i], tracks[i].note->f, 0.0f);
 		i++;
 	}
 }
