@@ -88,7 +88,6 @@ static int	play_music(int num_tracks, double start_time, t_track *tracks, t_mixe
 			i++;
 		}
 		i = 0;
-		usleep(1000);	// sleep in order to avoid unnecessary spinning by system resources
 	}
 	return (0);
 }
