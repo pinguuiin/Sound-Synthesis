@@ -62,7 +62,6 @@ typedef struct s_note
 	int				octave; // 0 to 9
 	double			duration; // duration in microseconds
 	struct s_note	*next;
-	struct s_note	*temp; // serves the sequencer: it needs to keep track of each voice's current note, without losing the original *note.
 }	t_note;
 
 // Description and notes contained in each track
@@ -75,6 +74,7 @@ typedef struct s_track
 	int				num_notes;
 	int				begin;  //beginning of line, for octave and duration reset in parsing
 	double			time_last_note_began;
+	struct s_note	*temp; // serves the sequencer: it needs to keep track of each voice's current note, without losing the original *note.
 }	t_track;
 
 // Information provided by the music sheet
