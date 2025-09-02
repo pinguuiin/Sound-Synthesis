@@ -10,7 +10,7 @@ int	free_info(t_info *info)
 	if (info->name)
 		free(info->name);
 	if (info->tracks){
-		for (int i = 0; i < info->num_voices; i++){
+		for (int i = 0; i < info->num_tracks; i++){
 			if (info->tracks[i].sidenote)
 				free(info->tracks[i].sidenote);
 			while (info->tracks[i].note){

@@ -6,10 +6,10 @@ void	create_mixer(t_info *info, t_mixer *mixer)
 	mixer->mixbuffer = NULL;
 	mixer->synths = NULL;
 	mixer->mixbuffer = malloc(FRAMES_PER_BUFFER * sizeof(float));
-	mixer->synths = malloc(info->num_voices * sizeof(t_synth));
+	mixer->synths = malloc(info->num_tracks * sizeof(t_synth));
 	if (!mixer->mixbuffer || !mixer->synths)
 		exit(destroy_mixer_and_info(mixer));
-	for (int i = 0; i < info->num_voices; i++)
+	for (int i = 0; i < info->num_tracks; i++)
 		mixer->synths[i].wavetable = NULL;
 }
 
@@ -20,7 +20,7 @@ int	destroy_mixer_and_info(t_mixer *mixer)
 	i = 0;
 	if (mixer->synths)
 	{
-		while(i < mixer->info->num_voices)
+		while(i < mixer->info->num_tracks)
 		{
 			if (mixer->synths[i].wavetable)
 				free(mixer->synths[i].wavetable);

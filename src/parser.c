@@ -44,16 +44,16 @@ static void	handle_tracks(t_info *info, char *line)
 	i = 0;
 	if (strncmp(line, "tracks ", 7) == 0){
 		line += 7;
-		info->num_voices = 1;
+		info->num_tracks = 1;
 		while (line[i]){
 			if (line[i++] == ',')
-				info->num_voices++;
+				info->num_tracks++;
 		}
-		info->tracks = malloc(info->num_voices * sizeof(t_track));
+		info->tracks = malloc(info->num_tracks * sizeof(t_track));
 		if (!info->tracks)
 			exit(free_info(info));
 		i = 0;
-		for (i = 0; i < info->num_voices && *line;)
+		for (i = 0; i < info->num_tracks && *line;)
 		{
 			info->tracks[i].sidenote = NULL;
 			info->tracks[i].note = NULL;
@@ -186,7 +186,7 @@ static void	handle_notes(t_info *info, char *line)
 		while (isspace(*line) || *line == '|')
 			line++;
 	}
-	if (info->now_track < info->num_voices - 1)
+	if (info->now_track < info->num_tracks - 1)
 		info->now_track++;
 }
 

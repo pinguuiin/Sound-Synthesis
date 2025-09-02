@@ -1,8 +1,8 @@
 #include "midione.h"
 
 static double	get_current_time(double start_time);
-static int		play_music(int num_voices, double start_time, t_track *tracks, t_mixer *mixer);
-static void		play_first_note(int num_voices, t_track *tracks, t_synth *synths);
+static int		play_music(int num_tracks, double start_time, t_track *tracks, t_mixer *mixer);
+static void		play_first_note(int num_tracks, t_track *tracks, t_synth *synths);
 
 void	sequencer(t_info *info, t_mixer *mixer)
 {
@@ -22,7 +22,7 @@ void	sequencer(t_info *info, t_mixer *mixer)
 	}
 
 	// main music loop
-	if (play_music(info->num_voices, start_time, info->tracks, mixer) == -1)
+	if (play_music(info->num_tracks, start_time, info->tracks, mixer) == -1)
 	{
 		perror("gettimeofday");
 		synth_destroy(mixer);
@@ -44,7 +44,7 @@ static double	get_current_time(double start_time)
 }
 
 // returns 0 upon success, and -1 upon gettimeofday() failure
-static int	play_music(int num_voices, double start_time, t_track *tracks, t_mixer *mixer)
+static int	play_music(int num_tracks, double start_time, t_track *tracks, t_mixer *mixer)
 {
 	int		n_done_playing;
 	double	current_time;
@@ -55,13 +55,13 @@ static int	play_music(int num_voices, double start_time, t_track *tracks, t_mixe
 	n_done_playing = 0;
 	i = 0;
 
-	play_first_note(num_voices, tracks, mixer->synths);
-	while (n_done_playing < num_voices)
+	play_first_note(num_tracks, tracks, mixer->synths);
+	while (n_done_playing < num_tracks)
 	{
 		current_time = get_current_time(start_time);
 		if (current_time == -1)
 			return (-1);
-		while (i < num_voices)
+		while (i < num_tracks)
 		{
 			current_track = &tracks[i];
 
@@ -92,12 +92,12 @@ static int	play_music(int num_voices, double start_time, t_track *tracks, t_mixe
 	return (0);
 }
 
-static void	play_first_note(int num_voices, t_track *tracks, t_synth *synths)
+static void	play_first_note(int num_tracks, t_track *tracks, t_synth *synths)
 {
 	int	i;
 
 	i = 0;
-	while (i < num_voices)
+	while (i < num_tracks)
 	{
 		if (tracks[i].temp->pitch != 'r')
 			set_note(&synths[i], tracks[i].temp->f, 1.0f);
