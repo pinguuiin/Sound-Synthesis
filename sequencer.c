@@ -16,7 +16,7 @@ void	sequencer(t_info *info, t_mixer *mixer)
 	start_time = get_current_time(start_time);
 	if (start_time == -1)
 	{
-		write(2, GET_TIME_FAILURE, sizeof(GET_TIME_FAILURE) - 1);
+		perror("gettimeofday");
 		synth_destroy(mixer);
 		exit (free_info(info));
 	}
@@ -24,7 +24,7 @@ void	sequencer(t_info *info, t_mixer *mixer)
 	// main music loop
 	if (play_music(info->num_tracks, start_time, info->tracks, mixer) == -1)
 	{
-		write(2, GET_TIME_FAILURE, sizeof(GET_TIME_FAILURE) - 1);
+		perror("gettimeofday");
 		synth_destroy(mixer);
 		exit (free_info(info));
 	}
