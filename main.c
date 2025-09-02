@@ -27,6 +27,7 @@ int	free_info(t_info *info)
 int	main(int argc, char **argv)
 {
 	t_info	info;
+	t_mixer	*mixer;
 
 	if (argc != 2)
 	{
@@ -41,7 +42,7 @@ int	main(int argc, char **argv)
 	}
 	parser(&info);
 	processor(&info);
-	t_mixer	*mixer = synth_init(&info);
+	mixer = synth_init(&info);
 	sequencer(&info, mixer);
 	synth_destroy(mixer);
 	free_info(&info);

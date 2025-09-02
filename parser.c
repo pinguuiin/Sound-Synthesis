@@ -32,7 +32,7 @@ static void	handle_tempo(t_info *info, char *line)
 			info->tempo = info->tempo * 10 + (*line) - '0';
 			line++;
 		}
-		info->beat_to_usec = ((double)60 / info->tempo) * 1000000;
+		info->usec_per_beat = ((double)60 / info->tempo) * 1000000;
 	}
 	info->file_pos =TRACKS;
 }
@@ -136,7 +136,7 @@ static void	handle_one_note(t_info *info, char *line)
 			duration_in_beats = strtof(line + 1, NULL);
 		else
 			duration_in_beats = 1;
-		new_note->duration = duration_in_beats * info->beat_to_usec;
+		new_note->duration = duration_in_beats * info->usec_per_beat;
 	}
 	else {
 		while (last->next)
@@ -148,7 +148,7 @@ static void	handle_one_note(t_info *info, char *line)
 		if (*line == '/')
 		{
 			duration_in_beats = strtof(line + 1, NULL);
-			new_note->duration = duration_in_beats * info->beat_to_usec;
+			new_note->duration = duration_in_beats * info->usec_per_beat;
 		}
 		else
 			new_note->duration = last->duration;

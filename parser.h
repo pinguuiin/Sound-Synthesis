@@ -84,7 +84,7 @@ typedef struct s_info
 	char		*line;  //current line been read
 	char		*name;
 	int			tempo;
-	double		beat_to_usec;
+	double		usec_per_beat;
 	int			num_tracks;
 	int			now_track;  // current track the reading position at
 	t_track		*tracks;
