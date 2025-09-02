@@ -89,28 +89,3 @@ void	synth_destroy(t_mixer *mixer)
 	Pa_Terminate();
 	destroy_mixer_and_info(mixer);
 }
-
-// FIXME: delete this synth() when ready!
-// This function will be separated by Yonatan
-/*
-void	synth(t_mixer *mixer)
-{
-	PaStream	*stream;
-
-	// This part being called when the Sequencer starts
-	Pa_Initialize(); //what if fail?
-	Pa_OpenDefaultStream(&stream, 0, 1, paFloat32, SAMPLE_RATE, FRAMES_PER_BUFFER, paCallback, mixer);
-	Pa_StartStream(stream);
-
-	//PLACEHOLDERS being called from Sequencer when the key is pressed
-	set_note(&(mixer->synths[0]), 440, 1);
-	Pa_Sleep(1000);
-	set_note(&(mixer->synths[1]), 125, 1);
-	Pa_Sleep(500);
-
-	// Being called when all tracks finish playing
-	Pa_StopStream(stream);
-	Pa_CloseStream(stream);
-	Pa_Terminate();
-}
-*/

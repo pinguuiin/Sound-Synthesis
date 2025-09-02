@@ -180,7 +180,7 @@ static void	handle_notes(t_info *info, char *line)
 			info->tracks[real_track].num_notes++;
 			info->tracks[real_track].begin = 0;
 		}
-		info->tracks[real_track].note->temp = info->tracks[real_track].note; // set the temp pointer to the head of the linked list
+		info->tracks[real_track].temp = info->tracks[real_track].note; // set the temp pointer to the head of the linked list
 		while (*line && !isspace(*line) && *line != '|')
 			line++;
 		while (isspace(*line) || *line == '|')
