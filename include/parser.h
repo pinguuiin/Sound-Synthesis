@@ -2,6 +2,8 @@
 # define PARSER_H
 
 #include <stdio.h>
+#include <ctype.h>
+#include <string.h>
 
 // Type of supported wave forms
 typedef enum e_track_type

@@ -2,6 +2,7 @@
 # define SYNTH_H
 
 #include "parser.h"
+#include "portaudio.h"
 
 #define SAMPLE_RATE			48000
 #define FRAMES_PER_BUFFER	256
@@ -29,6 +30,7 @@ void	set_note(t_synth *synth, float freq, double amplitude);
 void	create_mixer(t_info *info, t_mixer *mixer);
 void	choose_waveform(float *wavetable, t_track_type waveform_type);
 void	render_synth_to_buffer(t_synth *synth, t_mixer *mixer);
+void	synth_destroy(t_mixer *mixer);
 int		destroy_mixer_and_info(t_mixer *mixer);
 
 #endif

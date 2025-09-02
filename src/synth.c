@@ -80,6 +80,16 @@ void	init_synth(t_info *info, t_mixer *mixer)
 	Pa_StartStream(mixer->stream);
 }
 
+void	synth_destroy(t_mixer *mixer)
+{
+	if (!mixer) return ;
+	
+	Pa_StopStream(mixer->stream);
+	Pa_CloseStream(mixer->stream);
+	Pa_Terminate();
+	destroy_mixer_and_info(mixer);
+}
+
 // FIXME: delete this synth() when ready!
 // This function will be separated by Yonatan
 /*
