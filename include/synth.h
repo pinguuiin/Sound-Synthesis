@@ -2,7 +2,6 @@
 # define SYNTH_H
 
 #include "parser.h"
-#include "portaudio.h"
 
 #define SAMPLE_RATE			48000
 #define FRAMES_PER_BUFFER	256
