@@ -9,7 +9,7 @@ RESET_COLOR=\033[0m
 NAME = midione
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -g -O0
-LDFLAGS = -lm -pthread ./libportaudio.a -lasound
+LDFLAGS = -lm -pthread -lasound -L. -lportaudio
 HEADER = -I.
 
 SRCS = main.c \
