@@ -53,7 +53,7 @@ typedef struct s_info
 	char		*name;
 	int			tempo;
 	double		beat_to_usec;
-	int			num_tracks;
+	int			num_voices;
 	int			now_track;  // current track the reading position at
 	t_track		*tracks;
 	t_file_pos	file_pos;

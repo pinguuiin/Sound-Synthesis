@@ -42,7 +42,7 @@ void	processor(t_info *info)
 {
 	t_note	*temp;
 
-	for (int i = 0; i < info->num_tracks; i++){
+	for (int i = 0; i < info->num_voices; i++){
 		temp = info->tracks[i].note;
 		while (temp){
 			pitch_to_frequency(temp);
