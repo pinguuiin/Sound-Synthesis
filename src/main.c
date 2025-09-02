@@ -27,6 +27,7 @@ int	free_info(t_info *info)
 int	main(int argc, char **argv)
 {
 	t_info	info;
+	t_mixer	mixer;
 
 	if (argc != 2){
 		write(2, "Invalid input\n", 14);
@@ -39,7 +40,9 @@ int	main(int argc, char **argv)
 	}
 	parser(&info);
 	processor(&info);
-	sequencer(&info);
-	free_info(&info);
+	init_synth(&info, &mixer); // WARN: check!
+	synth(&mixer); //This line is only for testing the sample notes
+	//sequencer(&info, &mixer);
+	destroy_mixer_and_info(&mixer);
 	return (0);
 }
