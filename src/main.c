@@ -40,9 +40,8 @@ int	main(int argc, char **argv)
 	}
 	parser(&info);
 	processor(&info);
-	init_synth(&info, &mixer); // WARN: check!
-	synth(&mixer); //This line is only for testing the sample notes
-	//sequencer(&info, &mixer);
+	init_synth(&info, &mixer);
+	sequencer(&info, &mixer);
 	destroy_mixer_and_info(&mixer);
 	return (0);
 }

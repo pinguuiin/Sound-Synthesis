@@ -32,10 +32,11 @@ void	render_synth_to_buffer(t_synth *synth, t_mixer *mixer)
 	while (sample_index < FRAMES_PER_BUFFER)
 	{
 		int wt_idx = (int)(synth->phase * TABLE_SIZE) % TABLE_SIZE;
-		*output_buffer += synth->wavetable[wt_idx] * synth->amplitude * (1.0f / (float) mixer->num_voices);
+		*output_buffer += synth->wavetable[wt_idx] * synth->amplitude
+			* (1.0f / (float) mixer->num_voices);
 		output_buffer++;
 		synth->phase += synth->phaseIncrement;
-		if(synth->phase >= 1.0)
+		if (synth->phase >= 1.0)
 			synth->phase -= 1.0;
 		sample_index++;
 	}
