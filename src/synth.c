@@ -68,25 +68,20 @@ void	init_synth(t_info *info, t_mixer *mixer)
 {
 	create_mixer(info, mixer);
 
-	// Initialize PortAudio
-	Pa_Initialize();
-
 	// Create synths for each track
 	for (int i = 0; i < info->num_tracks; i++)
 		mixer->synths[i] = create_synth(mixer, info->tracks[i].type);
 
+	// Initialize PortAudio
+	Pa_Initialize();
 	Pa_OpenDefaultStream(&mixer->stream, 0, 1, paFloat32, SAMPLE_RATE,
 		FRAMES_PER_BUFFER, paCallback, mixer);
 	Pa_StartStream(mixer->stream);
 }
 
-void	synth_destroy(t_mixer *mixer)
+void	destroy_stream(t_mixer *mixer)
 {
-	// if (!mixer)
-	// 	return ;
-	
 	Pa_StopStream(mixer->stream);
 	Pa_CloseStream(mixer->stream);
 	Pa_Terminate();
-	destroy_mixer_and_info(mixer);
 }

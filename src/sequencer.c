@@ -16,16 +16,16 @@ void	sequencer(t_info *info, t_mixer *mixer)
 	if (start_time == -1)
 	{
 		perror("gettimeofday");
-		synth_destroy(mixer);
-		exit (free_info(info));
+		destroy_stream(mixer);
+		exit(destroy_mixer_and_info(mixer));
 	}
 
 	// main music loop
 	if (play_music(info->num_tracks, start_time, info->tracks, mixer) == -1)
 	{
 		perror("gettimeofday");
-		synth_destroy(mixer);
-		exit (free_info(info));
+		destroy_stream(mixer);
+		exit(destroy_mixer_and_info(mixer));
 	}
 }
 
