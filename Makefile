@@ -9,8 +9,8 @@ RESET_COLOR=\033[0m
 NAME = midione
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -g -O0
-LDFLAGS = -L$(HOME)/.local/lib
-LDLIBS = libportaudio.a -lrt -lm -lasound -ljack -pthread
+LDFLAGS = -L.
+LDLIBS = -lm -pthread -lasound -lportaudio
 HEADER = -I./include
 
 SRC_DIR = src

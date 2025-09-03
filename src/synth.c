@@ -32,10 +32,11 @@ void	render_synth_to_buffer(t_synth *synth, t_mixer *mixer)
 	while (sample_index < FRAMES_PER_BUFFER)
 	{
 		int wt_idx = (int)(synth->phase * TABLE_SIZE) % TABLE_SIZE;
-		*output_buffer += synth->wavetable[wt_idx] * synth->amplitude * (1.0f / (float) mixer->num_voices);
+		*output_buffer += synth->wavetable[wt_idx] * synth->amplitude
+			* (1.0f / (float) mixer->info->num_tracks);
 		output_buffer++;
 		synth->phase += synth->phaseIncrement;
-		if(synth->phase >= 1.0)
+		if (synth->phase >= 1.0)
 			synth->phase -= 1.0;
 		sample_index++;
 	}
@@ -57,7 +58,7 @@ static int paCallback(const void *inputBuffer, void *outputBuffer,
 	mixer = (t_mixer *)userData;
 	out = (float *)outputBuffer;
 	memset(mixer->mixbuffer, 0, framesPerBuffer * sizeof(float));
-	for (i = 0; i < mixer->num_voices; i++)
+	for (i = 0; i < mixer->info->num_tracks; i++)
 		render_synth_to_buffer(&(mixer->synths[i]), mixer);
 	memcpy(out, mixer->mixbuffer, framesPerBuffer * sizeof(float));
 	return (paContinue);
@@ -65,35 +66,22 @@ static int paCallback(const void *inputBuffer, void *outputBuffer,
 
 void	init_synth(t_info *info, t_mixer *mixer)
 {
-	int			i;
-	t_synth 	synth;
+	create_mixer(info, mixer);
 
-	create_mixer(info, mixer, info->num_tracks);
-	for (i = 0; i < info->num_tracks; i++)
-	{
-		synth = create_synth(mixer, info->tracks[i].type);
-		add_synth_to_mixer(mixer, synth, i);
-	}
+	// Create synths for each track
+	for (int i = 0; i < info->num_tracks; i++)
+		mixer->synths[i] = create_synth(mixer, info->tracks[i].type);
+
+	// Initialize PortAudio
+	Pa_Initialize();
+	Pa_OpenDefaultStream(&mixer->stream, 0, 1, paFloat32, SAMPLE_RATE,
+		FRAMES_PER_BUFFER, paCallback, mixer);
+	Pa_StartStream(mixer->stream);
 }
 
-// This function will be separated by Yonatan
-void	synth(t_mixer *mixer)
+void	destroy_stream(t_mixer *mixer)
 {
-	PaStream	*stream;
-
-	// This part being called when the Sequencer starts
-	Pa_Initialize(); //what if fail?
-	Pa_OpenDefaultStream(&stream, 0, 1, paFloat32, SAMPLE_RATE, FRAMES_PER_BUFFER, paCallback, mixer);
-	Pa_StartStream(stream);
-
-	//PLACEHOLDERS being called from Sequencer when the key is pressed
-	set_note(&(mixer->synths[0]), 440, 1);
-	Pa_Sleep(1000);
-	set_note(&(mixer->synths[1]), 125, 1);
-	Pa_Sleep(500);
-
-	// Being called when all tracks finish playing
-	Pa_StopStream(stream);
-	Pa_CloseStream(stream);
+	Pa_StopStream(mixer->stream);
+	Pa_CloseStream(mixer->stream);
 	Pa_Terminate();
 }
