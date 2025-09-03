@@ -39,7 +39,6 @@ typedef struct s_track
 	t_track_type	type;
 	char			*sidenote;
 	t_note			*note;
-	int				num_notes;
 	int				begin;  //beginning of line, for octave and duration reset in parsing
 	double			time_last_note_began;
 	struct s_note	*temp;
@@ -54,7 +53,7 @@ typedef struct s_info
 	int			tempo;
 	double		beat_to_usec;
 	int			num_tracks;
-	int			now_track;  // current track the reading position at
+	int			i_now;  // current track the reading position at
 	t_track		*tracks;
 	t_file_pos	file_pos;
 }	t_info;
@@ -63,5 +62,7 @@ int		free_info(t_info *info);
 void	parser(t_info *info);
 void	processor(t_info *info);
 char	*ft_strjoin(char const *s1, char const *s2);
+void	parse_waveform_list(t_info *info, char **line, int i);
+void	switch_to_real_track(t_info *info, int real_track);
 
 #endif

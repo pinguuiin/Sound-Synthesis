@@ -16,12 +16,12 @@ HEADER = -I./include
 SRC_DIR = src
 SRCS = main.c \
 		parser.c \
+		parser_utils.c \
 		processor.c \
 		sequencer.c \
 		waveforms.c \
 		synth.c \
-		mixer.c \
-		utils.c
+		mixer.c
 
 OBJ_DIR = obj
 OBJS = $(addprefix $(OBJ_DIR)/, $(SRCS:.c=.o))

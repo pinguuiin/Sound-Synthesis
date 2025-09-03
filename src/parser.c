@@ -52,32 +52,14 @@ static void	handle_tracks(t_info *info, char *line)
 		info->tracks = malloc(info->num_tracks * sizeof(t_track));
 		if (!info->tracks)
 			exit(free_info(info));
-		i = 0;
 		for (i = 0; i < info->num_tracks && *line;)
 		{
 			info->tracks[i].sidenote = NULL;
 			info->tracks[i].note = NULL;
 			info->tracks[i].time_last_note_began = 0;
 			info->tracks[i].id = i + 1;
-			info->tracks[i].num_notes = 0;
-			if (strncmp(line, "saw", 3) == 0){
-				info->tracks[i++].type = SAW;
-				line += 3;
-			}
-			else if (strncmp(line, "sine", 4) == 0){
-				info->tracks[i++].type = SINE;
-				line += 4;
-			}
-			else if (strncmp(line, "square", 6) == 0){
-				info->tracks[i++].type = SQUARE;
-				line += 6;
-			}
-			else if (strncmp(line, "triangle", 8) == 0){
-				info->tracks[i++].type = TRIANGLE;
-				line += 8;
-			}
-			if (*line == ',' || *line == ' ')
-				line++;
+			parse_waveform_list(info, &line, i);
+			i++;
 		}
 	}
 	info->file_pos = NOTES;
@@ -89,7 +71,7 @@ static void	handle_sidenote(t_info *info, char *line)
 	int		len;
 	char	*s;
 
-	i = info->now_track;
+	i = info->i_now;
 	while (*line == '#' || *line == ' ')
 		line++;
 	len = strlen(line) + 1;
@@ -110,12 +92,9 @@ static void	handle_sidenote(t_info *info, char *line)
 
 static void	handle_one_note(t_info *info, char *line)
 {
-	int		i;
 	t_note	*last;
 	t_note	*new_note;
-	double	duration_in_beats;
 
-	i = info->now_track;
 	new_note = malloc(sizeof(t_note));
 	if (!new_note)
 		exit(free_info(info));
@@ -126,39 +105,25 @@ static void	handle_one_note(t_info *info, char *line)
 		new_note->alteration = *line++;
 	else
 		new_note->alteration = '-';
-	last = info->tracks[i].note;
-	if (!last || info->tracks[i].begin == 1){ //no note has been saved yet
-		if (isdigit(*line))
-			new_note->octave = *line++ - '0';
-		else
-			new_note->octave = 4;
-		if (*line == '/')
-			duration_in_beats = strtof(line + 1, NULL);
-		else
-			duration_in_beats = 1;
-		new_note->duration = duration_in_beats * info->beat_to_usec;
-	}
-	else {
-		while (last->next)
-			last = last->next;
-		if (isdigit(*line))
-			new_note->octave = *line++ - '0';
-		else
-			new_note->octave = last->octave;
-		if (*line == '/')
-		{
-			duration_in_beats = strtof(line + 1, NULL);
-			new_note->duration = duration_in_beats * info->beat_to_usec;
-		}
-		else
-			new_note->duration = last->duration;
-	}
+	last = info->tracks[info->i_now].note;
 	while (last && last->next)
 		last = last->next;
+	if (isdigit(*line))
+		new_note->octave = *line++ - '0';
+	else if (info->tracks[info->i_now].begin == 1)  // first note of the line
+		new_note->octave = 4;
+	else
+		new_note->octave = last->octave;
+	if (*line == '/')
+		new_note->duration = strtof(line + 1, NULL) * info->beat_to_usec;
+	else if (info->tracks[info->i_now].begin == 1)
+		new_note->duration = info->beat_to_usec;
+	else
+		new_note->duration = last->duration;
 	if (last)
 		last->next = new_note;
 	else
-		info->tracks[i].note = new_note;
+		info->tracks[info->i_now].note = new_note;
 }
 
 static void	handle_notes(t_info *info, char *line)
@@ -166,18 +131,13 @@ static void	handle_notes(t_info *info, char *line)
 	int	real_track;
 
 	real_track = atoi(line) - 1;
-	if (info->now_track != real_track){
-		info->tracks[real_track].sidenote = info->tracks[info->now_track].sidenote;
-		info->tracks[info->now_track].sidenote = NULL;
-		info->now_track = real_track;
-	}
+	switch_to_real_track(info, real_track);
 	info->tracks[real_track].begin = 1;
 	while (*line && !isalpha(*line))
 		line++;
 	while (*line){
 		if (isalpha(*line)){
 			handle_one_note(info, line);
-			info->tracks[real_track].num_notes++;
 			info->tracks[real_track].begin = 0;
 		}
 		info->tracks[real_track].temp = info->tracks[real_track].note; // set the temp pointer to the head of the linked list
@@ -186,8 +146,8 @@ static void	handle_notes(t_info *info, char *line)
 		while (isspace(*line) || *line == '|')
 			line++;
 	}
-	if (info->now_track < info->num_tracks - 1)
-		info->now_track++;
+	if (info->i_now < info->num_tracks - 1)
+		info->i_now++;
 }
 
 static void	handle_notes_info(t_info *info, char *line)
@@ -237,7 +197,7 @@ void	parser(t_info *info)
 	info->line = NULL;
 	info->name = NULL;
 	info->tracks = NULL;
-	info->now_track = 0;
+	info->i_now = 0;
 	info->file_pos = NAME;
 	while (getline(&info->line, &len, info->fd) != -1){
 		parse_line(info, info->line);
