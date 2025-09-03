@@ -43,6 +43,5 @@ int	main(int argc, char **argv)
 	init_synth(&info, &mixer);
 	sequencer(&info, &mixer);
 	synth_destroy(&mixer);
-	destroy_mixer_and_info(&mixer);
 	return (0);
 }

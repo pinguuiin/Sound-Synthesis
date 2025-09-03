@@ -82,7 +82,8 @@ void	init_synth(t_info *info, t_mixer *mixer)
 
 void	synth_destroy(t_mixer *mixer)
 {
-	if (!mixer) return ;
+	// if (!mixer)
+	// 	return ;
 	
 	Pa_StopStream(mixer->stream);
 	Pa_CloseStream(mixer->stream);

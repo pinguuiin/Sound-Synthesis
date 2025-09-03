@@ -7,7 +7,6 @@ static void		play_first_note(int num_tracks, t_track *tracks, t_synth *synths);
 void	sequencer(t_info *info, t_mixer *mixer)
 {
 	double	start_time;
-	printf("Sequencing...\n");
 	// initialize variables to zero:
 	// important since it is passed to get_current_time()
 	start_time = 0;
