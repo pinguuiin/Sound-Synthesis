@@ -1,14 +1,15 @@
 #include "midione.h"
 
 static double	get_current_time(double start_time);
-static int		play_music(int num_tracks, double start_time, t_track *tracks, t_mixer *mixer);
-static void		play_first_note(int num_tracks, t_track *tracks, t_synth *synths);
+static int		play_music(int num_tracks, double start_time, t_track *tracks,
+					t_mixer *mixer);
+static void		play_first_note(int num_tracks, t_track *tracks,
+					t_synth *synths);
 
 void	sequencer(t_info *info, t_mixer *mixer)
 {
 	double	start_time;
-	// initialize variables to zero:
-	// important since it is passed to get_current_time()
+
 	start_time = 0;
 
 	// set the starting time
@@ -29,9 +30,11 @@ void	sequencer(t_info *info, t_mixer *mixer)
 	}
 }
 
-// When called for the starting time, returned time will be in microseconds
-// since the Epoch.
-// For all other calls, it will be in microseconds since start_time.
+/*
+* When called for the starting time, returned time will be in microseconds
+* since the Epoch.
+* For all other calls, it will be since start_time (in microseconds as well).
+*/
 static double	get_current_time(double start_time)
 {
 	struct timeval	time;
@@ -43,7 +46,8 @@ static double	get_current_time(double start_time)
 }
 
 // returns 0 upon success, and -1 upon gettimeofday() failure
-static int	play_music(int num_tracks, double start_time, t_track *tracks, t_mixer *mixer)
+static int	play_music(int num_tracks, double start_time, t_track *tracks,
+				t_mixer *mixer)
 {
 	int		n_done_playing;
 	double	current_time;
@@ -52,7 +56,6 @@ static int	play_music(int num_tracks, double start_time, t_track *tracks, t_mixe
 	t_synth	*current_synth;
 
 	n_done_playing = 0;
-	i = 0;
 
 	play_first_note(num_tracks, tracks, mixer->synths);
 	while (n_done_playing < num_tracks)
@@ -60,17 +63,19 @@ static int	play_music(int num_tracks, double start_time, t_track *tracks, t_mixe
 		current_time = get_current_time(start_time);
 		if (current_time == -1)
 			return (-1);
+		i = 0;
 		while (i < num_tracks)
 		{
 			current_track = &tracks[i];
-
 			if (current_track->temp)
 			{
 				if ((current_time - current_track->time_last_note_began)
 					>= current_track->temp->duration)
 				{
 					current_synth = &mixer->synths[i];
-					set_note(current_synth, current_track->temp->f, 0.0f); // cut the present note, even if it is a rest.
+
+					// cut the present note, even if it is a rest.
+					set_note(current_synth, current_track->temp->f, 0.0f);
 					current_track->temp = current_track->temp->next;
 					if (current_track->temp)
 					{
@@ -86,7 +91,6 @@ static int	play_music(int num_tracks, double start_time, t_track *tracks, t_mixe
 			}
 			i++;
 		}
-		i = 0;
 	}
 	return (0);
 }
