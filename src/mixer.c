@@ -1,4 +1,4 @@
-#include "midione.h"
+#include "minisynth.h"
 
 void	create_mixer(t_info *info, t_mixer *mixer)
 {

@@ -1,4 +1,4 @@
-#include "midione.h"
+#include "minisynth.h"
 
 static void	pitch_to_frequency(t_note *note)
 {

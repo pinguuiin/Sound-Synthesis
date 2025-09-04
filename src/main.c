@@ -1,4 +1,4 @@
-#include "midione.h"
+#include "minisynth.h"
 
 int	free_info(t_info *info)
 {

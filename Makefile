@@ -6,7 +6,7 @@ BBLUE=\033[1;34m
 BPURPLE=\033[1;35m
 RESET_COLOR=\033[0m
 
-NAME = midione
+NAME = minisynth
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -g -O0
 LDFLAGS = -L.

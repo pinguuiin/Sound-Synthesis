@@ -1,4 +1,4 @@
-#include "midione.h"
+#include "minisynth.h"
 
 static double	get_current_time(double start_time);
 static int		play_music(int num_tracks, double start_time, t_track *tracks,

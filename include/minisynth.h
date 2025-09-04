@@ -1,5 +1,5 @@
-#ifndef MIDIONE_H
-# define MIDIONE_H
+#ifndef MINISYNTH_H
+# define MINISYNTH_H
 
 #include "portaudio.h"
 #include "parser.h"

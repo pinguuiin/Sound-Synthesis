@@ -1,4 +1,4 @@
-#include "midione.h"
+#include "minisynth.h"
 
 static void	handle_name(t_info *info, char *line)
 {

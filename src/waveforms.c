@@ -1,4 +1,4 @@
-#include "midione.h"
+#include "minisynth.h"
 
 static void	generate_sine(float *wavetable)
 {
