@@ -15,7 +15,8 @@ typedef struct s_synth
 	float	*wavetable;
 	double	frequency;
 	double	amplitude;
-	int		is_press;
+	int		is_press;  // 1: press, 0: sustain pressing, -1: release, -2: released
+	int		is_release; // 1: is being released, 0: otherwise
 }	t_synth;
 
 typedef struct s_mixer

@@ -11,6 +11,8 @@ t_synth	create_synth(t_mixer *mixer, t_track_type waveform_type)
 	synth.phaseIncrement = 0.1;
 	synth.amplitude = 0.0;
 	synth.frequency = 0.1;
+	synth.is_press = -2;
+	synth.is_release = 0;
 	choose_waveform(synth.wavetable, waveform_type);
 	return (synth);
 }
@@ -33,7 +35,7 @@ void	render_synth_to_buffer(t_synth *synth, t_mixer *mixer)
 		case 1: stage = 0; break ; // attack + decay
 		case 0: stage = 1; break ; // sustain
 		case -1: stage = 2; break ; // release
-		case -2: stage = 4; break ; // gone
+		case -2: stage = 3; break ; // gone
 	}
 	while (i < FRAMES_PER_BUFFER)
 	{
