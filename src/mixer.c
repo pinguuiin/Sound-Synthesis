@@ -5,15 +5,15 @@ void	generate_envelope_table(t_mixer *mixer)
 	int	i;
 
 	for (i = 0; i < STAGE_TIME; i++)
-		mixer->envelope_table[0][i] = 1.0f - expf(- 5.0f / STAGE_TIME * (float)i);
+		mixer->envelope_table[0][i] = 1.0f - expf(STAGE_SLOPE / STAGE_TIME * (float)i);
 	for (; i < STAGE_TIME * 2; i++)
-		mixer->envelope_table[0][i] = 0.6f + 0.4f * expf(- 5.0f /STAGE_TIME * (float)(i - STAGE_TIME));
+		mixer->envelope_table[0][i] = 0.6f + 0.4f * expf(STAGE_SLOPE /STAGE_TIME * (float)(i - STAGE_TIME));
 	for (; i < FRAMES_PER_BUFFER; i++)
 		mixer->envelope_table[0][i] = 0.6f;
 	for (i = 0; i < FRAMES_PER_BUFFER; i++)
 		mixer->envelope_table[1][i] = 0.6f;
 	for (i = 0; i < STAGE_TIME; i++)
-		mixer->envelope_table[2][i] = 0.6f * expf(- 5.0f / STAGE_TIME * (float)i);
+		mixer->envelope_table[2][i] = 0.6f * expf(STAGE_SLOPE / STAGE_TIME * (float)i);
 	for (; i < FRAMES_PER_BUFFER; i++)
 		mixer->envelope_table[2][i] = 0.0f;
 	for (i = 0; i < FRAMES_PER_BUFFER; i++)

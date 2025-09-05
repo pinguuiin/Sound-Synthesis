@@ -73,7 +73,7 @@ static int	play_music(int num_tracks, double start_time, t_track *tracks,
 			if (curr_track->temp)
 			{
 				if ((curr_time - curr_track->time_last_note_began)
-					>= curr_track->temp->duration - 5333.333 && mixer->synths[i].is_release == 0)
+					>= curr_track->temp->duration - BUFFER_SIZE && mixer->synths[i].is_release == 0)
 				{
 					curr_synth = &mixer->synths[i];
 					cut_current_note(curr_track, curr_synth);
