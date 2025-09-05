@@ -1,5 +1,5 @@
 tempo 160
-tracks sine,sine
+tracks triangle,sine
 
 1: | c d e f e d | c/3  g | c/5  r/1 |
 2: | c2/3  d     | a2   g | c3/5 r/1 |

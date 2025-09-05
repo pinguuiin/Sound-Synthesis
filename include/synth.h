@@ -4,9 +4,9 @@
 #include "parser.h"
 
 #define SAMPLE_RATE			48000
-#define FRAMES_PER_BUFFER	1280  //Need to be larger than ATTACK + DECAY and large than RELEASE
-#define BUFFER_SIZE			26666.667  // FRAMES_PER_BUFFER / SAMPLE_RATE * 1000000
-#define STAGE_TIME			500
+#define FRAMES_PER_BUFFER	640  //Need to be larger than ATTACK + DECAY and large than RELEASE
+#define BUFFER_SIZE			13333.333  // FRAMES_PER_BUFFER / SAMPLE_RATE * 1000000
+#define STAGE_TIME			300
 #define STAGE_SLOPE			- 5.0f
 #define TABLE_SIZE			2048
 
