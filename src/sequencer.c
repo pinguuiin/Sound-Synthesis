@@ -91,6 +91,7 @@ static int	play_music(int num_tracks, double start_time, t_track *tracks,
 			i++;
 		}
 	}
+	Pa_Sleep((int)(BUFFER_SIZE / 900));
 	return (0);
 }
 
