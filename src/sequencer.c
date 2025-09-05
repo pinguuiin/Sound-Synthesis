@@ -5,7 +5,8 @@ static int		play_music(int num_tracks, double start_time, t_track *tracks,
 					t_mixer *mixer);
 static void		play_first_note(int num_tracks, t_track *tracks,
 					t_synth *synths);
-static void		cut_note_and_play_next(t_track *curr_track, double curr_time,
+static void		cut_current_note(t_track *curr_track, t_synth *curr_synth);
+static void		play_next_note(t_track *curr_track, double curr_time,
 					t_synth *curr_synth, int *n_done_playing);
 
 void	sequencer(t_info *info, t_mixer *mixer)
@@ -51,11 +52,11 @@ static double	get_current_time(double start_time)
 static int	play_music(int num_tracks, double start_time, t_track *tracks,
 				t_mixer *mixer)
 {
+	int		i;
+	int		n_done_playing;
 	double	curr_time;
 	t_track	*curr_track;
 	t_synth	*curr_synth;
-	int		i;
-	int		n_done_playing;
 
 	n_done_playing = 0;
 
@@ -72,16 +73,25 @@ static int	play_music(int num_tracks, double start_time, t_track *tracks,
 			if (curr_track->temp)
 			{
 				if ((curr_time - curr_track->time_last_note_began)
+					>= curr_track->temp->duration - BUFFER_SIZE && mixer->synths[i].is_release == 0)
+				{
+					curr_synth = &mixer->synths[i];
+					cut_current_note(curr_track, curr_synth);
+					curr_synth->is_release = 1;
+				}
+				if ((curr_time - curr_track->time_last_note_began)
 					>= curr_track->temp->duration)
 				{
 					curr_synth = &mixer->synths[i];
-					cut_note_and_play_next(curr_track, curr_time, curr_synth,
+					play_next_note(curr_track, curr_time, curr_synth,
 						&n_done_playing);
+					curr_synth->is_release = 0;
 				}
 			}
 			i++;
 		}
 	}
+	Pa_Sleep((int)(BUFFER_SIZE / 900));
 	return (0);
 }
 
@@ -93,28 +103,31 @@ static void	play_first_note(int num_tracks, t_track *tracks, t_synth *synths)
 	while (i < num_tracks)
 	{
 		if (tracks[i].temp->pitch != 'r')
-			set_note(&synths[i], tracks[i].temp->f, 1.0f);
+			set_note(&synths[i], tracks[i].temp->f, 1.0f, 1);
 		else
-			set_note(&synths[i], tracks[i].temp->f, 0.0f);
+			set_note(&synths[i], tracks[i].temp->f, 0.0f, 1);
 		i++;
 	}
 }
 
-static void	cut_note_and_play_next(t_track *curr_track, double curr_time,
-				t_synth *curr_synth, int *n_done_playing)
+static void	cut_current_note(t_track *curr_track, t_synth *curr_synth)
 {
 	// cut the presently played note, even if it is a rest
-	set_note(curr_synth, curr_track->temp->f, 0.0f);
+	set_note(curr_synth, curr_track->temp->f, 1.0f, -1);
+}
 
+static void	play_next_note(t_track *curr_track, double curr_time,
+				t_synth *curr_synth, int *n_done_playing)
+{
 	// move pointer to the next note to be played
 	curr_track->temp = curr_track->temp->next;
 	if (curr_track->temp)
 	{
 		// start playing the next note
 		if (curr_track->temp->pitch != 'r')
-			set_note(curr_synth, curr_track->temp->f, 1.0f);
+			set_note(curr_synth, curr_track->temp->f, 1.0f, 1);
 		else
-			set_note(curr_synth, curr_track->temp->f, 0.0f);
+			set_note(curr_synth, curr_track->temp->f, 0.0f, 1);
 		curr_track->time_last_note_began = curr_time;
 	}
 	else

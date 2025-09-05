@@ -11,35 +11,47 @@ t_synth	create_synth(t_mixer *mixer, t_track_type waveform_type)
 	synth.phaseIncrement = 0.1;
 	synth.amplitude = 0.0;
 	synth.frequency = 0.1;
+	synth.is_press = -2;
+	synth.is_release = 0;
 	choose_waveform(synth.wavetable, waveform_type);
 	return (synth);
 }
 
-void	set_note(t_synth *synth, float freq, double amplitude)
+void	set_note(t_synth *synth, float freq, double amplitude, int press_flag)
 {
 	synth->frequency = freq;
 	synth->phaseIncrement = freq / SAMPLE_RATE;
 	synth->amplitude = amplitude;
+	synth->is_press = press_flag;
 }
 
 void	render_synth_to_buffer(t_synth *synth, t_mixer *mixer)
 {
-	int		sample_index;
-	float	*output_buffer;
+	int		i;
+	int		stage;
 
-	sample_index = 0;
-	output_buffer = mixer->mixbuffer;
-	while (sample_index < FRAMES_PER_BUFFER)
+	i = 0;
+	switch (synth->is_press) {
+		case 1: stage = 0; break ; // attack + decay
+		case 0: stage = 1; break ; // sustain
+		case -1: stage = 2; break ; // release
+		case -2: stage = 3; break ; // gone
+	}
+	while (i < FRAMES_PER_BUFFER)
 	{
 		int wt_idx = (int)(synth->phase * TABLE_SIZE) % TABLE_SIZE;
-		*output_buffer += synth->wavetable[wt_idx] * synth->amplitude
-			* (1.0f / (float) mixer->info->num_tracks);
-		output_buffer++;
+		mixer->mixbuffer[i] += synth->wavetable[wt_idx] * synth->amplitude
+			* mixer->envelope_table[stage][i] * (1.0f / (float) mixer->info->num_tracks);
 		synth->phase += synth->phaseIncrement;
 		if (synth->phase >= 1.0)
 			synth->phase -= 1.0;
-		sample_index++;
+		i++;
 	}
+	if (synth->is_press == 1)
+		synth->is_press = 0;
+	else if (synth->is_press == -1)
+		synth->is_press = -2;
+
 }
 
 static int paCallback(const void *inputBuffer, void *outputBuffer,
